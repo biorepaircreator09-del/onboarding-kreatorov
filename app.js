@@ -67,8 +67,21 @@
   }
 
   // Сброс прогресса: пройденные шаги, тест, галочки. Выбор бренда остаётся
-  function resetProgress() {
-    if (!window.confirm('Сбросить прогресс? Отметки о пройденных шагах, результат теста и галочки чек-листа будут удалены.')) return;
+  // Первое нажатие просит подтвердить, второе сбрасывает (без системного окна: его может блокировать браузер)
+  function resetProgress(btn) {
+    if (btn && !btn.dataset.armed) {
+      btn.dataset.armed = '1';
+      btn.dataset.label = btn.textContent;
+      btn.textContent = 'Точно сбросить? Нажмите ещё раз';
+      btn.classList.add('armed');
+      setTimeout(function () {
+        if (!btn.isConnected) return;
+        delete btn.dataset.armed;
+        btn.textContent = btn.dataset.label;
+        btn.classList.remove('armed');
+      }, 5000);
+      return;
+    }
     try {
       Object.keys(localStorage).forEach(function (k) {
         if (k === STORE + 'done' || k === STORE + 'quiz' || k === STORE + 'finished' || k.indexOf(STORE + 'checks:') === 0) localStorage.removeItem(k);
@@ -126,7 +139,7 @@
     if (group !== null) html += '</ul>';
     nav.innerHTML = html;
     var rb = nav.querySelector('.nav-reset');
-    if (rb) rb.addEventListener('click', resetProgress);
+    if (rb) rb.addEventListener('click', function () { resetProgress(rb); });
     updateProgress();
   }
 
@@ -448,6 +461,7 @@
       '<button type="button" class="btn big go-next" data-next="' + (next ? next.id : 'home') + '">' +
       (next ? 'Готово, дальше: ' + esc(next.title) : 'Завершить онбординг') + ' →</button></div>' +
       (prev ? '<a class="btn ghost" href="#/' + prev.id + '">← ' + esc(prev.title) + '</a>' : '') +
+      (doneSet()[page.id] ? '<button type="button" class="undo-step">Шаг пройден ✓ · отметить как непройденный</button>' : '') +
       '</div>';
   }
 
@@ -465,6 +479,13 @@
       location.hash = '#/' + btn.dataset.next;
     };
     btn.addEventListener('click', go);
+    var undo = root.querySelector('.undo-step');
+    if (undo) undo.addEventListener('click', function () {
+      var d = doneSet();
+      delete d[page.id];
+      save('done', d);
+      show();
+    });
     // Нижняя панель на телефоне: следующий шаг всегда под пальцем
     var bar = document.querySelector('.mobile-step');
     var next = routePages()[stepNo(page)];
@@ -547,7 +568,7 @@
       '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
     var hr = root.querySelector('.hero-reset');
-    if (hr) hr.addEventListener('click', resetProgress);
+    if (hr) hr.addEventListener('click', function () { resetProgress(hr); });
   }
 
   /* ---------- удобства длинных страниц ---------- */
