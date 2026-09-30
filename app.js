@@ -17,7 +17,13 @@
     'МОЖНО': { cls: 'yes', label: 'Можно' },
     'НЕЛЬЗЯ': { cls: 'no', label: 'Нельзя' },
     'ОБЯЗАТЕЛЬНО': { cls: 'must', label: 'Обязательно' },
-    'ИСТОЧНИК': { cls: 'source', label: 'Источник' }
+    'ИСТОЧНИК': { cls: 'source', label: 'Источник' },
+    'ПЕРВОИСТОЧНИК': { cls: 'origin', label: 'Где читать в первоисточнике' },
+    'ПАМЯТКА': { cls: 'memo', label: 'Памятка в работу' },
+    'ТАК': { cls: 'so', label: 'Так' },
+    'НЕ ТАК': { cls: 'notso', label: 'Не так' },
+    'УТОЧНЯЕТСЯ': { cls: 'tbd', label: 'Уточняется у бренда' },
+    'ЗАЧЕМ': { cls: 'why', label: 'Зачем этот модуль' }
   };
 
   function load(key) {
@@ -168,8 +174,136 @@
     }).catch(function () { holder.textContent = 'Не удалось загрузить content/socials.json'; });
   }
 
+  /* ---------- учебные блоки внутри Markdown ---------- */
+
+  // ```persona — карточка героини: строки «ключ: значение», списки через « ; »
+  function renderPersona(code) {
+    var rows = [];
+    var meta = {};
+    code.textContent.split('\n').forEach(function (line) {
+      var m = line.match(/^\s*([^:]+?)\s*:\s*(.+)$/);
+      if (!m) return;
+      var k = m[1].trim();
+      var v = m[2].trim();
+      var key = k.toLowerCase();
+      if (['бренд', 'имя', 'про', 'цитата', 'статус', 'фото'].indexOf(key) >= 0) meta[key] = v;
+      else rows.push([k, v]);
+    });
+    var box = document.createElement('article');
+    box.className = 'persona';
+    if (meta['бренд']) box.dataset.brand = meta['бренд'];
+    var initials = (meta['имя'] || '?').trim().charAt(0);
+    box.innerHTML =
+      '<header class="p-head"><span class="p-ava" aria-hidden="true">' + esc(initials) + '</span>' +
+      '<div><h3 class="p-name">' + esc(meta['имя'] || '') + '</h3>' +
+      (meta['про'] ? '<p class="p-about">' + esc(meta['про']) + '</p>' : '') + '</div></header>' +
+      (meta['цитата'] ? '<blockquote class="p-quote">' + esc(meta['цитата']) + '</blockquote>' : '') +
+      '<dl class="p-rows">' + rows.map(function (r) {
+        var parts = r[1].split(/\s+;\s+/);
+        var val = parts.length > 1
+          ? '<ul>' + parts.map(function (x) { return '<li>' + inline(x) + '</li>'; }).join('') + '</ul>'
+          : inline(r[1]);
+        return '<div class="p-row"><dt>' + esc(r[0]) + '</dt><dd>' + val + '</dd></div>';
+      }).join('') + '</dl>' +
+      (meta['статус'] ? '<p class="p-status">' + inline(meta['статус']) + '</p>' : '');
+    code.parentElement.replaceWith(box);
+  }
+
+  // Короткая строка Markdown без абзаца: **жирный**, ссылки, «ёлочки»
+  function inline(s) {
+    return marked.parseInline ? marked.parseInline(s) : esc(s);
+  }
+
+  // ```вопрос — упражнение с мгновенной проверкой.
+  // Первые строки — вопрос, «- вариант» (звёздочка * в конце — верный), «= объяснение».
+  var qCounter = 0;
+  function renderQuestion(code) {
+    var q = [], opts = [], explain = '';
+    code.textContent.split('\n').forEach(function (line) {
+      var t = line.trim();
+      if (!t) return;
+      if (/^-\s+/.test(t)) {
+        var right = /\*\s*$/.test(t);
+        opts.push({ text: t.replace(/^-\s+/, '').replace(/\s*\*\s*$/, ''), right: right });
+      } else if (/^=\s*/.test(t)) {
+        explain += (explain ? ' ' : '') + t.replace(/^=\s*/, '');
+      } else {
+        q.push(t);
+      }
+    });
+    var id = 'iq' + (++qCounter);
+    var box = document.createElement('fieldset');
+    box.className = 'iq';
+    box.innerHTML = '<legend><span class="iq-kicker">Проверьте себя</span>' + inline(q.join(' ')) + '</legend>' +
+      '<div class="iq-opts">' + opts.map(function (o, i) {
+        return '<button type="button" class="iq-opt" data-i="' + i + '">' + inline(o.text) + '</button>';
+      }).join('') + '</div><p class="iq-explain" role="status" aria-live="polite" hidden></p>';
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('.iq-opt');
+      if (!b) return;
+      var i = +b.dataset.i;
+      box.querySelectorAll('.iq-opt').forEach(function (x, j) {
+        x.classList.toggle('right', opts[j].right && (j === i || opts[i].right));
+        x.classList.toggle('wrong', j === i && !opts[j].right);
+        if (opts[j].right) x.classList.add('was-right');
+      });
+      var ex = box.querySelector('.iq-explain');
+      ex.hidden = false;
+      ex.className = 'iq-explain ' + (opts[i].right ? 'ok' : 'bad');
+      ex.innerHTML = '<b>' + (opts[i].right ? 'Верно.' : 'Не совсем.') + '</b> ' + inline(explain);
+    });
+    box.id = id;
+    code.parentElement.replaceWith(box);
+  }
+
+  // ```выбор-бренда — большие карточки выбора, сохраняются для всего курса
+  function renderBrandPicker(code) {
+    var box = document.createElement('div');
+    box.className = 'picker';
+    var opts = [
+      ['belukha', 'Предгорья Белухи / Smart Bee', 'Чай, иван-чай, мёд'],
+      ['biorepair', 'Biorepair®', 'Зубные пасты и уход'],
+      ['all', 'Оба бренда', 'Буду работать с обоими']
+    ];
+    function draw() {
+      var cur = load('brandPref');
+      box.innerHTML = '<p class="picker-q">С каким брендом вы будете работать?</p><div class="picker-opts">' +
+        opts.map(function (o) {
+          return '<button type="button" class="pick" data-b="' + o[0] + '" aria-pressed="' + (cur === o[0]) + '">' +
+            '<span class="pick-name">' + esc(o[1]) + '</span><span class="pick-sub">' + esc(o[2]) + '</span></button>';
+        }).join('') + '</div>' +
+        '<p class="picker-note">' + (cur ? 'Готово. Дальше в каждом модуле первым будет ваш бренд, второй – свёрнут, его можно открыть. Сменить выбор можно здесь в любой момент.' : 'Выбор можно поменять в любой момент.') + '</p>';
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('.pick');
+      if (!b) return;
+      save('brandPref', b.dataset.b);
+      draw();
+    });
+    draw();
+    code.parentElement.replaceWith(box);
+  }
+
+  // Две врезки подряд «так / не так» (или «можно / нельзя») встают рядом
+  function pairCallouts(root) {
+    root.querySelectorAll('.callout').forEach(function (c) {
+      var n = c.nextElementSibling;
+      var pair = (c.classList.contains('so') && n && n.classList.contains('notso')) ||
+        (c.classList.contains('yes') && n && n.classList.contains('no'));
+      if (!pair || c.parentElement.classList.contains('pair')) return;
+      var w = document.createElement('div');
+      w.className = 'pair';
+      c.before(w);
+      w.appendChild(c);
+      w.appendChild(n);
+    });
+  }
+
   function enhance(root, page) {
     // Блок ```socials belukha``` превращается в карточки соцсетей
+    root.querySelectorAll('pre > code.language-persona').forEach(renderPersona);
+    root.querySelectorAll('pre > code.language-вопрос').forEach(renderQuestion);
+    root.querySelectorAll('pre > code.language-выбор-бренда').forEach(renderBrandPicker);
     root.querySelectorAll('pre > code.language-socials').forEach(function (code) {
       var holder = document.createElement('div');
       code.parentElement.replaceWith(holder);
@@ -180,7 +314,7 @@
     root.querySelectorAll('blockquote').forEach(function (bq) {
       var first = bq.firstElementChild;
       if (!first) return;
-      var m = first.innerHTML.match(/^\s*\[!([А-ЯЁA-Z]+)\]\s*([^\n<]*)(?:<br>)?\n?/);
+      var m = first.innerHTML.match(/^\s*\[!([А-ЯЁA-Z][А-ЯЁA-Z ]*?)\][ \t]*([^\n<]*)(?:<br>)?\n?/);
       if (!m || !CALLOUTS[m[1]]) return;
       var c = CALLOUTS[m[1]];
       first.innerHTML = first.innerHTML.slice(m[0].length);
@@ -191,6 +325,8 @@
       while (bq.firstChild) box.appendChild(bq.firstChild);
       bq.replaceWith(box);
     });
+
+    pairCallouts(root);
 
     // Чек-листы: галочки запоминаются в браузере
     var checks = load('checks:' + page.id) || {};
@@ -262,7 +398,7 @@
 
   function countChecks(root) {
     var vis = function (sel) {
-      return Array.prototype.filter.call(root.querySelectorAll(sel), function (x) { return !x.closest('[hidden]'); });
+      return Array.prototype.filter.call(root.querySelectorAll(sel), function (x) { return !x.closest('[hidden]') && !x.closest('.brand-sec.other:not(.open)'); });
     };
     var all = vis('.task-item input');
     var on = vis('.task-item input:checked');
@@ -373,26 +509,27 @@
     }).join('');
 
     var brands = '<section class="home-sec"><h2>Два бренда – два голоса</h2><div class="brand-cards">' +
-      '<a class="brand-card" data-brand="belukha" href="#/belukha"><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
+      '<a class="brand-card" data-brand="belukha" href="#/katalog-belukha"><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
       '<span class="bc-name">Предгорья Белухи / Smart Bee</span>' +
       '<span class="bc-text">Уют, семья и красивое чаепитие. От креатора ждут охваты. Главное табу: «чай лечит».</span>' +
-      '<span class="bc-more">Про бренд →</span></a>' +
-      '<a class="brand-card" data-brand="biorepair" href="#/biorepair"><span class="bc-kicker">Зубные пасты · Италия</span>' +
+      '<span class="bc-more">Смотреть продукты →</span></a>' +
+      '<a class="brand-card" data-brand="biorepair" href="#/katalog-biorepair"><span class="bc-kicker">Зубные пасты · Италия</span>' +
       '<span class="bc-name">Biorepair®</span>' +
       '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре – и материал на пересборку.</span>' +
-      '<span class="bc-more">Про бренд →</span></a>' +
+      '<span class="bc-more">Смотреть продукты →</span></a>' +
       '</div></section>';
 
     var tools = '<section class="home-sec"><h2>Под рукой в работе</h2><div class="tool-cards">' +
       tool('katalog-belukha', '🍵', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
       tool('katalog-biorepair', '🦷', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
+      tool('faq', '?', 'Частые вопросы', 'Процесс, сдача, правки, маркировка') +
       tool('proverka', '✓', 'Проверка текста', 'Вставьте подпись – подсветим стоп-слова') +
       tool('shablony', '✎', 'Шаблоны', 'Сценарий, бриф и памятка блогеру') +
-      tool('biblioteka', '⧉', 'Библиотека и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
+      tool('biblioteka', '⧉', 'Все материалы и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
       '</div></section>';
 
     root.innerHTML = hero +
-      '<section class="home-sec"><h2>Маршрут: 4 этапа</h2><ol class="stages">' + stages + '</ol></section>' +
+      '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
   }
 
@@ -407,7 +544,10 @@
     nav.setAttribute('aria-label', 'На этой странице');
     nav.innerHTML = '<span>На странице:</span>' + Array.prototype.map.call(hs, function (h, i) {
       h.id = 'sec-' + i;
-      return '<button type="button" data-to="sec-' + i + '">' + esc(h.textContent.replace(/^\d+\.\s*/, '')) + '</button>';
+      var t = Array.prototype.filter.call(h.childNodes, function (n) {
+        return !(n.classList && n.classList.contains('other-toggle'));
+      }).map(function (n) { return n.textContent; }).join('');
+      return '<button type="button" data-to="sec-' + i + '">' + esc(t.replace(/^\d+\.\s*/, '')) + '</button>';
     }).join('');
     nav.addEventListener('click', function (e) {
       var b = e.target.closest('button');
@@ -431,7 +571,8 @@
     if (lead) hero.appendChild(lead);
   }
 
-  // Переключатель «Мой бренд»: разделы с названием бренда в заголовке показываются по выбору
+  // Переключатель «Мой бренд»: разделы с названием бренда в заголовке h2.
+  // Свой бренд открыт, чужой свёрнут до заголовка – его можно раскрыть.
   function brandTabs(root) {
     var sections = [];
     var cur = null;
@@ -446,20 +587,34 @@
       }
       if (cur && el !== cur && !el.classList.contains('check-bar')) cur.appendChild(el);
     });
-    if (!sections.length) return;
+    var branded = sections.filter(function (x) { return x.dataset.brand !== 'all'; });
+    if (!branded.length) return;
     var bar = document.createElement('div');
     bar.className = 'brand-switch';
     bar.setAttribute('role', 'group');
-    bar.setAttribute('aria-label', 'Показать правила бренда');
+    bar.setAttribute('aria-label', 'Мой бренд');
     bar.innerHTML = '<span>Мой бренд:</span>' +
       [['all', 'Оба'], ['belukha', 'Белуха'], ['biorepair', 'Biorepair®']].map(function (o) {
         return '<button type="button" data-b="' + o[0] + '">' + o[1] + '</button>';
       }).join('');
-    sections[0].before(bar);
+    branded[0].before(bar);
+    branded.forEach(function (sec) {
+      var h = sec.querySelector('h2');
+      var t = document.createElement('button');
+      t.type = 'button';
+      t.className = 'other-toggle';
+      h.appendChild(t);
+      t.addEventListener('click', function () { sec.classList.toggle('open'); });
+    });
     function apply(v) {
       save('brandPref', v);
       bar.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.b === v ? 'true' : 'false'); });
-      sections.forEach(function (s) { s.hidden = !(s.dataset.brand === 'all' || v === 'all' || s.dataset.brand === v); });
+      branded.forEach(function (sec) {
+        var other = v !== 'all' && sec.dataset.brand !== v;
+        sec.classList.toggle('other', other);
+        sec.classList.remove('open');
+        sec.querySelector('.other-toggle').textContent = 'Как у другого бренда';
+      });
       countChecks(root);
     }
     bar.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) apply(b.dataset.b); });
@@ -840,7 +995,7 @@
         root.innerHTML = stepHeader(page) + '<article class="md">' + marked.parse(stripFrontMatter(text)) + '</article>' + stepFooter(page);
         var art = root.querySelector('.md');
         enhance(art, page);
-        if (page.tabs === 'brand') brandTabs(art);
+        brandTabs(art);
         brandHero(art, page);
         addToc(art);
         bindStep(root, page);
