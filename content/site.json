@@ -1,0 +1,31 @@
+{
+  "title": "Онбординг креатора",
+  "updated": "30.09.2026",
+  "brands": [
+    { "id": "belukha", "name": "Белуха / Smart Bee" },
+    { "id": "biorepair", "name": "Biorepair®" }
+  ],
+  "stages": ["Знакомство", "Бренды", "Правила и практика", "Проверка себя"],
+  "pages": [
+    { "id": "home", "title": "Главная", "type": "home" },
+
+    { "id": "start", "title": "Три правила до старта", "file": "start.md", "step": true, "stage": 1, "time": "5 мин" },
+    { "id": "raznica", "title": "Два бренда: в чём разница", "file": "raznica.md", "step": true, "stage": 1, "time": "10 мин" },
+    { "id": "belukha", "title": "Предгорья Белухи / Smart Bee", "file": "belukha.md", "step": true, "stage": 2, "time": "20 мин", "brand": "belukha" },
+    { "id": "biorepair", "title": "Biorepair®", "file": "biorepair.md", "step": true, "stage": 2, "time": "25 мин", "brand": "biorepair" },
+    { "id": "pravila", "title": "Можно, нельзя, обязательно", "file": "pravila.md", "step": true, "stage": 3, "time": "5 мин", "tabs": "brand" },
+    { "id": "primery", "title": "Примеры, которые работают", "file": "primery.md", "step": true, "stage": 3, "time": "10 мин" },
+    { "id": "semka", "title": "Съёмка, образ, локация", "file": "semka.md", "step": true, "stage": 3, "time": "10 мин" },
+    { "id": "cheklist", "title": "Чек-лист перед публикацией", "file": "cheklist.md", "step": true, "stage": 4, "time": "5 мин", "tabs": "brand" },
+    { "id": "test", "title": "Итоговый тест и первое задание", "file": "quiz.json", "step": true, "stage": 4, "time": "20 мин", "type": "quiz" },
+
+    { "id": "katalog-belukha", "title": "Чай и мёд Белухи", "file": "catalog/belukha.json", "group": "Каталог", "type": "catalog", "brand": "belukha", "intro": "Все позиции бренда. Нажмите на карточку: вкус, состав, момент, идеи роликов. Листайте стрелками или свайпом." },
+    { "id": "katalog-biorepair", "title": "Продукты Biorepair®", "file": "catalog/biorepair.json", "group": "Каталог", "type": "catalog", "brand": "biorepair", "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом." },
+
+    { "id": "proverka", "title": "Проверка текста", "file": "stopwords.json", "group": "Инструменты", "type": "checker" },
+    { "id": "shablony", "title": "Шаблоны: сценарий, бриф, памятка", "file": "shablony.md", "group": "Инструменты" },
+    { "id": "biblioteka", "title": "Библиотека и соцсети", "file": "biblioteka.md", "group": "Инструменты" },
+
+    { "id": "obnovlenie", "title": "Как обновлять этот сайт", "file": "obnovlenie.md", "hidden": true }
+  ]
+}

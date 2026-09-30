@@ -1,0 +1,26 @@
+{
+  "asof": "30.09.2026",
+  "belukha": [
+    { "platform": "instagram", "handle": "belukha_rf", "url": "https://www.instagram.com/belukha_rf/", "followers": "11,4 тыс.", "note": "Главная лента: рилс 2 раза в день. Смотреть первой", "main": true },
+    { "platform": "instagram", "handle": "smartbee_rf", "url": "https://www.instagram.com/smartbee_rf/", "followers": "123,8 тыс.", "note": "Та же лента: посты выходят совместно с belukha_rf" },
+    { "platform": "instagram", "handle": "smartbee_rus", "url": "https://www.instagram.com/smartbee_rus/", "followers": "37,2 тыс.", "note": "Та же лента, соавтор публикаций" },
+    { "platform": "youtube", "handle": "Предгорья Белухи", "url": "https://www.youtube.com/@%D0%9F%D1%80%D0%B5%D0%B4%D0%B3%D0%BE%D1%80%D1%8C%D1%8F%D0%91%D0%B5%D0%BB%D1%83%D1%85%D0%B8-%D0%BE4%D0%B4/shorts", "followers": "1,3 тыс.", "note": "Shorts. Здесь «Звуки чаепития» собрали миллион" },
+    { "platform": "youtube", "handle": "smart-bee", "url": "https://www.youtube.com/@smart-bee", "followers": "54 тыс.", "note": "Те же Shorts, второй канал" },
+    { "platform": "tiktok", "handle": "smartbee_rf", "url": "https://www.tiktok.com/@smartbee_rf", "followers": "12,1 тыс." },
+    { "platform": "tiktok", "handle": "belukha_rf", "url": "https://www.tiktok.com/@belukha_rf", "followers": "8,9 тыс." },
+    { "platform": "telegram", "handle": "smartbee_rf", "url": "https://t.me/smartbee_rf", "followers": "2,3 тыс.", "note": "Рецепты, подарки, опросы" },
+    { "platform": "telegram", "handle": "belukha_rf", "url": "https://t.me/belukha_rf", "followers": "405" },
+    { "platform": "vk", "handle": "belukha_rf", "url": "https://vk.com/belukha_rf" },
+    { "platform": "vk", "handle": "smartbee_rf", "url": "https://vk.com/smartbee_rf" },
+    { "platform": "max", "handle": "Канал бренда", "url": "https://max.ru/join/1_vZIgWFRPxiw0U8ytRungpBsL5uGQUvP5E3jQ0cCvQ" },
+    { "platform": "threads", "handle": "belukha_rf", "url": "https://www.threads.com/@belukha_rf" }
+  ],
+  "biorepair": [
+    { "platform": "instagram", "handle": "biorepair_rus", "url": "https://www.instagram.com/biorepair_rus/", "followers": "269 тыс.", "note": "Главная лента: рилс 3 раза в день. Смотреть первой", "main": true },
+    { "platform": "youtube", "handle": "Biorepair Russia", "url": "https://www.youtube.com/@BiorepairRussia", "followers": "2,4 тыс.", "note": "Shorts и длинные разборы" },
+    { "platform": "telegram", "handle": "biorepair_rus", "url": "https://t.me/biorepair_rus", "followers": "1,8 тыс.", "note": "Экспертные посты, мифы, опросы" },
+    { "platform": "tiktok", "handle": "biorepair.rus", "url": "https://www.tiktok.com/@biorepair.rus", "followers": "371" },
+    { "platform": "vk", "handle": "biorepair_ru", "url": "https://vk.com/biorepair_ru" },
+    { "platform": "max", "handle": "Канал бренда", "url": "https://max.ru/join/tGnG5QA2uAOQAOOfiSQOWG5egORHKk7VFQUX-fsRpXQ" }
+  ]
+}
