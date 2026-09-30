@@ -69,7 +69,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .layout { display: grid; grid-template-columns: var(--nav-w) minmax(0, 1fr); min-height: calc(100vh - var(--top-h)); background: linear-gradient(90deg, var(--side) var(--nav-w), var(--bg) var(--nav-w)); }
 .nav {
   position: sticky; top: var(--top-h); align-self: start;
-  height: calc(100vh - var(--top-h)); overflow-y: auto;
+  height: calc(100vh - var(--top-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: transparent transparent;
   padding: 18px 14px 40px; border-right: 1px solid var(--line); background: var(--side);
 }
 .nav a { color: var(--ink-2); text-decoration: none; }
@@ -92,7 +92,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .nav a[data-brand="belukha"]::after { background: var(--belukha); }
 .nav a[data-brand="biorepair"]::after { background: var(--bio); }
 
-.page { width: 100%; max-width: 900px; padding: 36px 48px 80px; min-width: 0; outline: none; }
+.page { width: 100%; max-width: 880px; margin: 0 auto; padding: 36px 40px 80px; min-width: 0; outline: none; }
 .loading, .error { color: var(--muted); }
 .error { color: var(--no); }
 
@@ -104,7 +104,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .step-dots a { width: 22px; height: 6px; border-radius: 99px; background: var(--line); }
 .step-dots a.done { background: var(--belukha-green); }
 .step-dots a.cur { background: var(--accent); width: 34px; }
-.step-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; max-width: 760px; margin-top: 56px; padding: 22px; border-radius: 18px; background: var(--accent-soft); }
+.step-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-top: 56px; padding: 22px; border-radius: 18px; background: var(--accent-soft); }
 .sf-next { display: flex; flex-direction: column; gap: 8px; }
 .sf-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
 .mobile-step { display: none; }
@@ -127,7 +127,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .brand-switch button[data-b="biorepair"][aria-pressed="true"] { background: var(--bio); }
 
 /* ---------- типографика статьи ---------- */
-.md { max-width: 760px; }
+.md { max-width: none; }
 .md h1, .page > h1 { font: var(--head-weight) clamp(28px, 3.6vw, 40px)/1.15 var(--font-head); margin: 0 0 12px; letter-spacing: -.015em; text-wrap: balance; }
 .md h1 + p { font-size: 18px; line-height: 1.55; color: var(--muted); margin-top: 0; }
 .md h2 { font: var(--head-weight) 24px/1.25 var(--font-head); margin: 48px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
@@ -182,7 +182,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .topbar .btn.small { border-color: var(--belukha); background: var(--belukha); }
 
 /* ---------- тест ---------- */
-.quiz { max-width: 760px; }
+.quiz { max-width: none; }
 .q { margin: 0 0 14px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .q legend { float: left; width: 100%; padding: 0; margin-bottom: 12px; font-weight: 700; font-size: 16.5px; line-height: 1.45; }
 .q-num { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 10px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 13px; }
@@ -305,7 +305,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 
 /* ---------- проверка текста ---------- */
-.checker { max-width: 760px; }
+.checker { max-width: none; }
 .checker-brand { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
 .checker-brand label { cursor: pointer; }
 .checker-brand input { position: absolute; opacity: 0; pointer-events: none; }
@@ -441,3 +441,6 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 }
 
 body[data-page="catalog"] .page { max-width: 1240px; }
+
+.nav:hover { scrollbar-color: #d6d2e4 transparent; }
+body[data-page="home"] .page { max-width: 1080px; }
