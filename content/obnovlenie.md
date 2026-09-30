@@ -81,10 +81,6 @@
 
 Поля, которые понимает каталог: `name`, `name_ru`, `line`, `type`, `age`, `volume`, `weight`, `caffeine`, `tagline`, `properties`, `taste`, `color`, `composition`, `components`, `free_from`, `moment`, `brewing`, `how_to_use`, `for_whom`, `say`, `avoid`, `content_ideas`, `focus` (true – «Топ продаж»), `new` (true – «Новинка»), `images`, `source`.
 
-## Проверка текста
-
-Правила лежат в `content/stopwords.json`. Чтобы добавить стоп-слово, скопируйте строку-правило и поменяйте `pattern` (что искать) и `say` (что предложить взамен). `level`: `stop` – красное, `warn` – замечание. `brand`: `all`, `belukha` или `biorepair`.
-
 ## Добавить новую страницу
 
 1. В папке `content` нажмите **Add file → Create new file**, назовите, например, `novoe.md`, напишите текст, сохраните.

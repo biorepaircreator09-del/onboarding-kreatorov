@@ -25,7 +25,6 @@
     { "id": "katalog-biorepair", "title": "Продукты Biorepair®", "file": "catalog/biorepair.json", "group": "Каталог", "type": "catalog", "brand": "biorepair", "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом." },
 
     { "id": "faq", "title": "Частые вопросы", "file": "faq.md", "group": "Инструменты" },
-    { "id": "proverka", "title": "Проверка текста", "file": "stopwords.json", "group": "Инструменты", "type": "checker" },
     { "id": "pravila", "title": "Шпаргалка: можно и нельзя", "file": "pravila.md", "group": "Инструменты" },
     { "id": "shablony", "title": "Шаблоны: сценарий, бриф, памятка", "file": "shablony.md", "group": "Инструменты" },
     { "id": "biblioteka", "title": "Все материалы и соцсети", "file": "biblioteka.md", "group": "Инструменты" },

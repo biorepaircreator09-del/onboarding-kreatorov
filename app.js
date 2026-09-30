@@ -480,7 +480,7 @@
       : n ? 'С возвращением! Продолжим с шага ' + stepNo(nxt)
       : 'От знакомства с брендами до первого ролика';
     var cta = !nxt
-      ? '<a class="btn big" href="#/test">Открыть итоговое задание</a><a class="btn ghost" href="#/proverka">Проверить свой текст</a>'
+      ? '<a class="btn big" href="#/test">Открыть итоговое задание</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>'
       : '<a class="btn big" href="#/' + nxt.id + '">' + (n ? 'Продолжить' : 'Начать онбординг') + ' →</a>' +
         '<span class="cta-note">' + (n ? 'Шаг ' + stepNo(nxt) + ': ' + esc(nxt.title) : 'Первый шаг займёт 5 минут') + '</span>';
 
@@ -523,7 +523,6 @@
       tool('katalog-belukha', '🍵', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
       tool('katalog-biorepair', '🦷', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
       tool('faq', '?', 'Частые вопросы', 'Процесс, сдача, правки, маркировка') +
-      tool('proverka', '✓', 'Проверка текста', 'Вставьте подпись – подсветим стоп-слова') +
       tool('shablony', '✎', 'Шаблоны', 'Сценарий, бриф и памятка блогеру') +
       tool('biblioteka', '⧉', 'Все материалы и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
       '</div></section>';
@@ -676,93 +675,6 @@
       form.querySelectorAll('.explain').forEach(function (p) { p.hidden = true; });
       form.querySelector('.quiz-result').textContent = '';
     });
-  }
-
-  /* ---------- проверка текста ---------- */
-
-  function compileRules(rules) {
-    return rules.map(function (r) {
-      try { return Object.assign({}, r, { re: new RegExp(r.pattern, r.flags || 'giu') }); }
-      catch (e) { console.warn('Правило с ошибкой, пропущено:', r.pattern); return null; }
-    }).filter(Boolean);
-  }
-
-  function scanText(text, rules, brand) {
-    var hits = [];
-    rules.forEach(function (r) {
-      if (r.brand !== 'all' && brand !== 'all' && r.brand !== brand) return;
-      r.re.lastIndex = 0;
-      var m;
-      while ((m = r.re.exec(text)) !== null) {
-        if (!m[0]) { r.re.lastIndex++; continue; }
-        hits.push({ start: m.index, end: m.index + m[0].length, text: m[0], rule: r });
-      }
-    });
-    hits.sort(function (a, b) { return a.start - b.start || (a.rule.level === 'stop' ? -1 : 1); });
-    return hits;
-  }
-
-  function highlight(text, hits) {
-    var out = '', pos = 0;
-    hits.forEach(function (h) {
-      if (h.start < pos) return; // перекрытие: первое совпадение важнее
-      out += esc(text.slice(pos, h.start)) +
-        '<mark class="' + h.rule.level + '" title="' + esc(h.rule.say) + '">' + esc(h.text) + '</mark>';
-      pos = h.end;
-    });
-    return out + esc(text.slice(pos));
-  }
-
-  function renderChecker(root, page, data) {
-    var rules = compileRules(data.rules);
-    var draft = load('checker:draft') || '';
-    root.innerHTML = '<h1>' + esc(page.title) + '</h1>' +
-      '<div class="md"><p>' + esc(data.intro) + '</p></div>' +
-      '<div class="checker">' +
-      '<div class="checker-brand" role="radiogroup" aria-label="Бренд">' +
-      '<label><input type="radio" name="cb" value="all" checked><span>Оба бренда</span></label>' +
-      '<label data-brand="belukha"><input type="radio" name="cb" value="belukha"><span>Белуха</span></label>' +
-      '<label data-brand="biorepair"><input type="radio" name="cb" value="biorepair"><span>Biorepair®</span></label>' +
-      '</div>' +
-      '<textarea class="checker-input" rows="8" placeholder="Например: Эта отбеливающая паста убивает бактерии. Успейте купить!"></textarea>' +
-      '<div class="checker-summary" role="status"></div>' +
-      '<div class="checker-preview" hidden></div>' +
-      '<ul class="checker-list"></ul>' +
-      '</div>';
-    var ta = root.querySelector('.checker-input');
-    ta.value = draft;
-
-    function run() {
-      var text = ta.value;
-      save('checker:draft', text);
-      var brand = root.querySelector('input[name=cb]:checked').value;
-      var sum = root.querySelector('.checker-summary');
-      var prev = root.querySelector('.checker-preview');
-      var list = root.querySelector('.checker-list');
-      if (!text.trim()) { sum.textContent = ''; sum.className = 'checker-summary'; prev.hidden = true; list.innerHTML = ''; return; }
-      var hits = scanText(text, rules, brand);
-      var stops = hits.filter(function (h) { return h.rule.level === 'stop'; }).length;
-      var warns = hits.length - stops;
-      sum.className = 'checker-summary ' + (stops ? 'bad' : warns ? 'mid' : 'ok');
-      sum.textContent = stops ? 'Стоп-слов: ' + stops + (warns ? ', замечаний: ' + warns : '') + '. В таком виде текст не публикуем.'
-        : warns ? 'Стоп-слов нет, замечаний: ' + warns + '. Проверьте их перед отправкой.'
-        : 'Проверка ничего не нашла. Теперь пройдите чек-лист глазами.';
-      prev.hidden = false;
-      prev.innerHTML = highlight(text, hits);
-      var seen = {};
-      list.innerHTML = hits.filter(function (h) {
-        var k = h.rule.pattern + '|' + h.text.toLowerCase();
-        if (seen[k]) return false;
-        return (seen[k] = true);
-      }).map(function (h) {
-        return '<li class="' + h.rule.level + '"><span class="chip">' + (h.rule.level === 'stop' ? 'Стоп' : 'Замечание') + '</span>' +
-          '<b>«' + esc(h.text) + '»</b> <span class="grp">' + esc(h.rule.group) + '</span><br>' + esc(h.rule.say) + '</li>';
-      }).join('');
-    }
-    var t;
-    ta.addEventListener('input', function () { clearTimeout(t); t = setTimeout(run, 150); });
-    root.querySelectorAll('input[name=cb]').forEach(function (r) { r.addEventListener('change', run); });
-    run();
   }
 
   /* ---------- каталог продукции ---------- */
@@ -987,8 +899,6 @@
     fetchText(page.file).then(function (text) {
       if (page.type === 'quiz') {
         renderQuiz(root, page, JSON.parse(text));
-      } else if (page.type === 'checker') {
-        renderChecker(root, page, JSON.parse(text));
       } else if (page.type === 'catalog') {
         renderCatalog(root, page, JSON.parse(text), sub);
       } else {
