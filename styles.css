@@ -88,9 +88,6 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .nav-list a { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; font-size: 14.5px; line-height: 1.3; }
 .nav a:hover { background: rgba(78, 42, 135, .06); }
 .nav a[aria-current="page"] { background: var(--surface); box-shadow: var(--shadow); color: var(--ink); font-weight: 700; }
-.nav a[data-brand]::after { content: ""; width: 8px; height: 8px; border-radius: 50%; margin-left: auto; flex: none; }
-.nav a[data-brand="belukha"]::after { background: var(--belukha); }
-.nav a[data-brand="biorepair"]::after { background: var(--bio); }
 
 .page { width: 100%; max-width: 880px; margin: 0 auto; padding: 36px 40px 80px; min-width: 0; outline: none; }
 .loading, .error { color: var(--muted); }
@@ -242,10 +239,10 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .bc-name { font: 800 22px/1.2 var(--font-head); }
 .bc-text { font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.9); }
 .bc-more { margin-top: auto; padding-top: 6px; font-weight: 700; font-size: 14.5px; }
-.tool-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.tool-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; }
 .tool-card { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); text-decoration: none; transition: transform .16s ease, box-shadow .16s ease, border-color .16s; }
 .tool-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--belukha) 35%, var(--line)); }
-.tc-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--side); font-size: 19px; }
+.tc-ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: var(--belukha-soft); color: var(--belukha); }
 .tc-name { font-weight: 800; font-size: 15.5px; }
 .tc-text { font-size: 13.5px; line-height: 1.45; color: var(--muted); }
 
@@ -420,16 +417,12 @@ body[data-page="home"] .page { max-width: 1080px; }
 
 /* ---------- v2: учебные блоки ---------- */
 .callout.origin { --c: var(--accent); background: var(--surface); border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--line)); border-left: 4px solid var(--accent); font-size: 14.5px; }
-.callout.origin .callout-title::before { content: "📘 "; }
 .callout.origin ul { margin-bottom: 10px; }
 .callout.memo { --c: var(--accent-2); background: var(--accent-2-soft); border-left-width: 6px; }
-.callout.memo .callout-title::before { content: "📌 "; }
 .callout.why { --c: var(--accent); background: var(--accent-soft); font-size: 16px; }
 .callout.tbd { --c: #8a6d00; background: #fff8e1; border-left-style: dashed; }
 .callout.so { --c: var(--yes); background: var(--yes-soft); }
 .callout.notso { --c: var(--no); background: var(--no-soft); }
-.callout.so .callout-title::before { content: "✓ "; }
-.callout.notso .callout-title::before { content: "✕ "; }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
 .pair .callout { margin: 0; }
 
@@ -498,3 +491,21 @@ body[data-page="home"] .page { max-width: 1080px; }
 .nav-reset.armed, .hero-reset.armed { color: #fff; background: var(--no); border-color: var(--no); text-decoration: none; padding: 3px 8px; border-radius: 99px; }
 .undo-step { flex-basis: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--muted); font: 600 13px/1.4 var(--font-body); text-align: left; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .undo-step:hover { color: var(--no); }
+
+/* ---------- иконки ---------- */
+.ico { width: 1em; height: 1em; flex: none; vertical-align: -0.14em; }
+.callout-title { display: flex; align-items: center; gap: 7px; }
+.callout-title .ico { width: 16px; height: 16px; }
+.nav-home-ico { color: var(--belukha); }
+.nav-home-ico .ico { width: 16px; height: 16px; }
+.nav-ico { width: 18px; height: 18px; color: var(--muted); }
+.nav a[data-brand="belukha"] .nav-ico { color: var(--belukha); }
+.nav a[data-brand="biorepair"] .nav-ico { color: var(--bio); }
+.nav a[aria-current="page"] .nav-ico { color: var(--accent); }
+.tc-ico .ico { width: 22px; height: 22px; }
+.tool-card[href="#/katalog-biorepair"] .tc-ico { background: var(--bio-soft); color: var(--bio); }
+.tool-card[href="#/katalog-belukha"] .tc-ico { background: var(--belukha-green-soft); color: var(--belukha-green); }
+.bc-ico { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 4px; border-radius: 14px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3); }
+.bc-ico .ico { width: 24px; height: 24px; }
+.iq-kicker { display: flex; align-items: center; gap: 6px; }
+.iq-kicker .ico { width: 14px; height: 14px; }

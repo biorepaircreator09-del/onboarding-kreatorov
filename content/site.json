@@ -21,13 +21,13 @@
     { "id": "sdacha", "title": "Как сдать работу и что будет дальше?", "file": "sdacha.md", "step": true, "stage": 5, "time": "8 мин" },
     { "id": "test", "title": "Я готов?", "file": "quiz.json", "step": true, "stage": 5, "time": "15 мин", "type": "quiz" },
 
-    { "id": "katalog-belukha", "title": "Чай и мёд Белухи", "file": "catalog/belukha.json", "group": "Каталог", "type": "catalog", "brand": "belukha", "intro": "Все позиции бренда. Нажмите на карточку: вкус, состав, момент, идеи роликов. Листайте стрелками или свайпом." },
-    { "id": "katalog-biorepair", "title": "Продукты Biorepair®", "file": "catalog/biorepair.json", "group": "Каталог", "type": "catalog", "brand": "biorepair", "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом." },
+    { "id": "katalog-belukha", "icon": "leaf", "title": "Чай и мёд Белухи", "file": "catalog/belukha.json", "group": "Каталог", "type": "catalog", "brand": "belukha", "intro": "Все позиции бренда. Нажмите на карточку: вкус, состав, момент, идеи роликов. Листайте стрелками или свайпом." },
+    { "id": "katalog-biorepair", "icon": "dental", "title": "Продукты Biorepair®", "file": "catalog/biorepair.json", "group": "Каталог", "type": "catalog", "brand": "biorepair", "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом." },
 
-    { "id": "faq", "title": "Частые вопросы", "file": "faq.md", "group": "Инструменты" },
-    { "id": "pravila", "title": "Шпаргалка: можно и нельзя", "file": "pravila.md", "group": "Инструменты" },
-    { "id": "shablony", "title": "Шаблоны: сценарий, бриф, памятка", "file": "shablony.md", "group": "Инструменты" },
-    { "id": "biblioteka", "title": "Все материалы и соцсети", "file": "biblioteka.md", "group": "Инструменты" },
+    { "id": "faq", "icon": "circle-help", "title": "Частые вопросы", "file": "faq.md", "group": "Инструменты" },
+    { "id": "pravila", "icon": "list-checks", "title": "Шпаргалка: можно и нельзя", "file": "pravila.md", "group": "Инструменты" },
+    { "id": "shablony", "icon": "file-pen-line", "title": "Шаблоны: сценарий, бриф, памятка", "file": "shablony.md", "group": "Инструменты" },
+    { "id": "biblioteka", "icon": "folder-open", "title": "Все материалы и соцсети", "file": "biblioteka.md", "group": "Инструменты" },
 
     { "id": "obnovlenie", "title": "Как обновлять этот сайт", "file": "obnovlenie.md", "hidden": true }
   ]

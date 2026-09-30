@@ -9,22 +9,52 @@
   var cache = {};
 
   var CALLOUTS = {
-    'ПРИМЕР': { cls: 'example', label: 'Пример' },
-    'ЗАДАНИЕ': { cls: 'task', label: 'Задание' },
-    'САМОПРОВЕРКА': { cls: 'check', label: 'Самопроверка' },
-    'ПРЕДПОЛОЖЕНИЕ': { cls: 'guess', label: 'Предположение: не подтверждено брендом' },
-    'ВАЖНО': { cls: 'important', label: 'Важно' },
-    'МОЖНО': { cls: 'yes', label: 'Можно' },
-    'НЕЛЬЗЯ': { cls: 'no', label: 'Нельзя' },
-    'ОБЯЗАТЕЛЬНО': { cls: 'must', label: 'Обязательно' },
-    'ИСТОЧНИК': { cls: 'source', label: 'Источник' },
-    'ПЕРВОИСТОЧНИК': { cls: 'origin', label: 'Где читать в первоисточнике' },
-    'ПАМЯТКА': { cls: 'memo', label: 'Памятка в работу' },
-    'ТАК': { cls: 'so', label: 'Так' },
-    'НЕ ТАК': { cls: 'notso', label: 'Не так' },
-    'УТОЧНЯЕТСЯ': { cls: 'tbd', label: 'Уточняется у бренда' },
-    'ЗАЧЕМ': { cls: 'why', label: 'Зачем этот модуль' }
+    'ПРИМЕР': { cls: 'example', label: 'Пример', icon: 'lightbulb' },
+    'ЗАДАНИЕ': { cls: 'task', label: 'Задание', icon: 'pencil' },
+    'САМОПРОВЕРКА': { cls: 'check', label: 'Самопроверка', icon: 'list-checks' },
+    'ПРЕДПОЛОЖЕНИЕ': { cls: 'guess', label: 'Предположение: не подтверждено брендом', icon: 'info' },
+    'ВАЖНО': { cls: 'important', label: 'Важно', icon: 'triangle-alert' },
+    'МОЖНО': { cls: 'yes', label: 'Можно', icon: 'check' },
+    'НЕЛЬЗЯ': { cls: 'no', label: 'Нельзя', icon: 'ban' },
+    'ОБЯЗАТЕЛЬНО': { cls: 'must', label: 'Обязательно', icon: 'target' },
+    'ИСТОЧНИК': { cls: 'source', label: 'Источник', icon: 'book-open' },
+    'ПЕРВОИСТОЧНИК': { cls: 'origin', label: 'Где читать в первоисточнике', icon: 'book-open' },
+    'ПАМЯТКА': { cls: 'memo', label: 'Памятка в работу', icon: 'pin' },
+    'ТАК': { cls: 'so', label: 'Так', icon: 'check' },
+    'НЕ ТАК': { cls: 'notso', label: 'Не так', icon: 'x' },
+    'УТОЧНЯЕТСЯ': { cls: 'tbd', label: 'Уточняется у бренда', icon: 'clock' },
+    'ЗАЧЕМ': { cls: 'why', label: 'Зачем этот модуль', icon: 'target' }
   };
+
+  // Иконки: Lucide (ISC) и Tabler «dental» (MIT), линейные 24×24
+  var ICONS = {
+      "ban": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M4.929 4.929 19.07 19.071\"/>",
+      "book-open": "<path d=\"M12 5v16\"/> <path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/>",
+      "check": "<path d=\"M20 6 9 17l-5-5\"/>",
+      "circle-help": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/> <path d=\"M12 17h.01\"/>",
+      "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M12 6v6l4 2\"/>",
+      "coffee": "<path d=\"M10 2v2\"/> <path d=\"M14 2v2\"/> <path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/> <path d=\"M6 2v2\"/>",
+      "file-pen-line": "<path d=\"M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z\"/> <path d=\"M14.487 7.858A1 1 0 0 1 14 7V2\"/> <path d=\"M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516\"/> <path d=\"M8 18h1\"/>",
+      "folder-open": "<path d=\"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2\"/>",
+      "house": "<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/> <path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
+      "info": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M12 16v-4\"/> <path d=\"M12 8h.01\"/>",
+      "leaf": "<path d=\"M11 20a10 10 0 0010-10 25.9 25.9 0 00-1.04-7.281 1 1 0 00-1.755-.325C15.833 5.5 13 5.5 9.8 6.1A7 7 0 0011 20\"/> <path d=\"M2 21a5 5 0 012.911-4.544C7.613 15.212 8.351 15.24 11 13\"/>",
+      "lightbulb": "<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/> <path d=\"M9 18h6\"/> <path d=\"M10 22h4\"/>",
+      "list-checks": "<path d=\"M13 5h8\"/> <path d=\"M13 12h8\"/> <path d=\"M13 19h8\"/> <path d=\"m3 17 2 2 4-4\"/> <path d=\"m3 7 2 2 4-4\"/>",
+      "pencil": "<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/> <path d=\"m15 5 4 4\"/>",
+      "pin": "<path d=\"M12 17v5\"/> <path d=\"M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z\"/>",
+      "sparkles": "<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/> <path d=\"M20 2v4\"/> <path d=\"M22 4h-4\"/> <circle cx=\"4\" cy=\"20\" r=\"2\"/>",
+      "target": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <circle cx=\"12\" cy=\"12\" r=\"6\"/> <circle cx=\"12\" cy=\"12\" r=\"2\"/>",
+      "triangle-alert": "<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/> <path d=\"M12 9v4\"/> <path d=\"M12 17h.01\"/>",
+      "x": "<path d=\"M18 6 6 18\"/> <path d=\"m6 6 12 12\"/>",
+      "cup": "<path d=\"M5 11h14v-3h-14l0 3\"/> <path d=\"M17.5 11l-1.5 10h-8l-1.5 -10\"/> <path d=\"M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1\"/> <path d=\"M15 5v-2\"/>",
+      "dental": "<path d=\"M12 5.5c-1.074 -.586 -2.583 -1.5 -4 -1.5c-2.1 0 -4 1.247 -4 5c0 4.899 1.056 8.41 2.671 10.537c.573 .756 1.97 .521 2.567 -.236c.398 -.505 .819 -1.439 1.262 -2.801c.292 -.771 .892 -1.504 1.5 -1.5c.602 0 1.21 .737 1.5 1.5c.443 1.362 .864 2.295 1.262 2.8c.597 .759 2 .993 2.567 .237c1.615 -2.127 2.671 -5.637 2.671 -10.537c0 -3.74 -1.908 -5 -4 -5c-1.423 0 -2.92 .911 -4 1.5\"/> <path d=\"M12 5.5l3 1.5\"/>"
+  };
+
+  function icon(name, cls) {
+    if (!ICONS[name]) return '';
+    return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
+  }
 
   function load(key) {
     try { return JSON.parse(localStorage.getItem(STORE + key)); } catch (e) { return null; }
@@ -108,7 +138,7 @@
     var nxt = nextStep();
     var steps = routePages();
     var html = '<a class="nav-home" href="#/home"' + (activeId === 'home' ? ' aria-current="page"' : '') + '>' +
-      '<span class="nav-home-ico" aria-hidden="true">⌂</span>Главная</a>';
+      '<span class="nav-home-ico" aria-hidden="true">' + icon('house') + '</span>Главная</a>';
 
     html += '<p class="nav-group">Онбординг <span class="nav-count">' + doneCount() + ' из ' + steps.length +
       (doneCount() ? ' · <button type="button" class="nav-reset">сбросить</button>' : '') + '</span></p>';
@@ -134,7 +164,7 @@
         group = p.group;
         html += '<p class="nav-group">' + esc(group) + '</p><ul class="nav-list">';
       }
-      html += '<li>' + navLink(p, activeId, esc(p.title)) + '</li>';
+      html += '<li>' + navLink(p, activeId, icon(p.icon, 'nav-ico') + esc(p.title)) + '</li>';
     });
     if (group !== null) html += '</ul>';
     nav.innerHTML = html;
@@ -262,7 +292,7 @@
     var id = 'iq' + (++qCounter);
     var box = document.createElement('fieldset');
     box.className = 'iq';
-    box.innerHTML = '<legend><span class="iq-kicker">Проверьте себя</span>' + inline(q.join(' ')) + '</legend>' +
+    box.innerHTML = '<legend><span class="iq-kicker">' + icon('list-checks') + 'Проверьте себя</span>' + inline(q.join(' ')) + '</legend>' +
       '<div class="iq-opts">' + opts.map(function (o, i) {
         return '<button type="button" class="iq-opt" data-i="' + i + '">' + inline(o.text) + '</button>';
       }).join('') + '</div><p class="iq-explain" role="status" aria-live="polite" hidden></p>';
@@ -349,7 +379,7 @@
       if (!first.textContent.trim() && !first.querySelector('img')) first.remove();
       var box = document.createElement('aside');
       box.className = 'callout ' + c.cls;
-      box.innerHTML = '<p class="callout-title">' + esc(c.label) + (m[2].trim() ? ': ' + esc(m[2].trim()) : '') + '</p>';
+      box.innerHTML = '<p class="callout-title">' + icon(c.icon) + esc(c.label) + (m[2].trim() ? ': ' + esc(m[2].trim()) : '') + '</p>';
       while (bq.firstChild) box.appendChild(bq.firstChild);
       bq.replaceWith(box);
     });
@@ -499,7 +529,7 @@
   /* ---------- главная ---------- */
 
   function tool(id, ico, name, text) {
-    return '<a class="tool-card" href="#/' + id + '"><span class="tc-ico" aria-hidden="true">' + ico + '</span>' +
+    return '<a class="tool-card" href="#/' + id + '"><span class="tc-ico" aria-hidden="true">' + icon(ico) + '</span>' +
       '<span class="tc-name">' + esc(name) + '</span><span class="tc-text">' + esc(text) + '</span></a>';
   }
 
@@ -546,22 +576,22 @@
     }).join('');
 
     var brands = '<section class="home-sec"><h2>Два бренда – два голоса</h2><div class="brand-cards">' +
-      '<a class="brand-card" data-brand="belukha" href="#/katalog-belukha"><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
+      '<a class="brand-card" data-brand="belukha" href="#/katalog-belukha"><span class="bc-ico">' + icon('leaf') + '</span><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
       '<span class="bc-name">Предгорья Белухи / Smart Bee</span>' +
       '<span class="bc-text">Уют, семья и красивое чаепитие. От креатора ждут охваты. Главное табу: «чай лечит».</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
-      '<a class="brand-card" data-brand="biorepair" href="#/katalog-biorepair"><span class="bc-kicker">Зубные пасты · Италия</span>' +
+      '<a class="brand-card" data-brand="biorepair" href="#/katalog-biorepair"><span class="bc-ico">' + icon('dental') + '</span><span class="bc-kicker">Зубные пасты · Италия</span>' +
       '<span class="bc-name">Biorepair®</span>' +
       '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре – и материал на пересборку.</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
       '</div></section>';
 
     var tools = '<section class="home-sec"><h2>Под рукой в работе</h2><div class="tool-cards">' +
-      tool('katalog-belukha', '🍵', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
-      tool('katalog-biorepair', '🦷', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
-      tool('faq', '?', 'Частые вопросы', 'Процесс, сдача, правки, маркировка') +
-      tool('shablony', '✎', 'Шаблоны', 'Сценарий, бриф и памятка блогеру') +
-      tool('biblioteka', '⧉', 'Все материалы и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
+      tool('katalog-belukha', 'leaf', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
+      tool('katalog-biorepair', 'dental', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
+      tool('faq', 'circle-help', 'Частые вопросы', 'Процесс, сдача, правки, маркировка') +
+      tool('shablony', 'file-pen-line', 'Шаблоны', 'Сценарий, бриф и памятка блогеру') +
+      tool('biblioteka', 'folder-open', 'Все материалы и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
       '</div></section>';
 
     root.innerHTML = hero +
