@@ -1,4 +1,4 @@
-/* Онбординг креатора: всё содержание приходит из content/, здесь только движок.
+/* Smart Beauty Hub: всё содержание приходит из content/, здесь только движок.
    Страницы описаны в content/site.json, тексты — Markdown, тест — content/quiz.json. */
 (function () {
   'use strict';
@@ -349,7 +349,7 @@
         '<span class="cta-note">' + (n ? 'Шаг ' + stepNo(nxt) + ': ' + esc(nxt.title) : 'Первый шаг займёт 5 минут') + '</span>';
 
     var hero = '<section class="home-hero">' +
-      '<p class="eyebrow">Онбординг креатора · Предгорья Белухи и Biorepair®</p>' +
+      '<p class="eyebrow">Smart Beauty Hub · онбординг креаторов Предгорий Белухи и Biorepair®</p>' +
       '<h1>' + esc(title) + '</h1>' +
       '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом – немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
       '<div class="hero-cta">' + cta + '</div>' +
