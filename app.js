@@ -66,6 +66,18 @@
     return routePages().find(function (p) { return !d[p.id]; }) || null;
   }
 
+  // Сброс прогресса: пройденные шаги, тест, галочки. Выбор бренда остаётся
+  function resetProgress() {
+    if (!window.confirm('Сбросить прогресс? Отметки о пройденных шагах, результат теста и галочки чек-листа будут удалены.')) return;
+    try {
+      Object.keys(localStorage).forEach(function (k) {
+        if (k === STORE + 'done' || k === STORE + 'quiz' || k === STORE + 'finished' || k.indexOf(STORE + 'checks:') === 0) localStorage.removeItem(k);
+      });
+    } catch (e) { /* хранилище недоступно */ }
+    location.hash = '#/home';
+    show();
+  }
+
   function stepNo(page) {
     return routePages().findIndex(function (p) { return p.id === page.id; }) + 1;
   }
@@ -85,7 +97,8 @@
     var html = '<a class="nav-home" href="#/home"' + (activeId === 'home' ? ' aria-current="page"' : '') + '>' +
       '<span class="nav-home-ico" aria-hidden="true">⌂</span>Главная</a>';
 
-    html += '<p class="nav-group">Онбординг <span class="nav-count">' + doneCount() + ' из ' + steps.length + '</span></p>';
+    html += '<p class="nav-group">Онбординг <span class="nav-count">' + doneCount() + ' из ' + steps.length +
+      (doneCount() ? ' · <button type="button" class="nav-reset">сбросить</button>' : '') + '</span></p>';
     var stage = 0;
     html += '<ol class="nav-steps">';
     steps.forEach(function (p, i) {
@@ -112,6 +125,8 @@
     });
     if (group !== null) html += '</ul>';
     nav.innerHTML = html;
+    var rb = nav.querySelector('.nav-reset');
+    if (rb) rb.addEventListener('click', resetProgress);
     updateProgress();
   }
 
@@ -490,7 +505,8 @@
       '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом – немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
       '<div class="hero-cta">' + cta + '</div>' +
       '<div class="hero-progress"><div class="progress-bar big" role="progressbar" aria-label="Прогресс онбординга" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
-      '<span>' + n + ' из ' + steps.length + ' шагов</span></div>' +
+      '<span>' + n + ' из ' + steps.length + ' шагов</span>' +
+      (n ? '<button type="button" class="hero-reset">Сбросить прогресс</button>' : '') + '</div>' +
       '</section>';
 
     var stages = (site.stages || []).map(function (name, si) {
@@ -530,6 +546,8 @@
     root.innerHTML = hero +
       '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
+    var hr = root.querySelector('.hero-reset');
+    if (hr) hr.addEventListener('click', resetProgress);
   }
 
   /* ---------- удобства длинных страниц ---------- */

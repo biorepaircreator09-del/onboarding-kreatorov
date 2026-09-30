@@ -488,3 +488,10 @@ body[data-page="home"] .page { max-width: 1080px; }
   .other-toggle { display: none; margin: 6px 0 0; }
   .brand-sec.other .other-toggle { display: table; margin-left: 0; }
 }
+
+/* ---------- сброс прогресса ---------- */
+.nav-reset { margin: 0; padding: 0; border: 0; background: none; color: var(--muted); font: 600 11.5px/1 var(--font-body); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.nav-reset:hover { color: var(--no); }
+.hero-reset { margin-left: 6px; padding: 6px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 99px; background: transparent; color: rgba(255,255,255,.9); font: 600 12.5px/1.2 var(--font-body); cursor: pointer; }
+.hero-reset:hover { background: rgba(255,255,255,.14); }
+@media (max-width: 560px) { .hero-progress { flex-wrap: wrap; } }
