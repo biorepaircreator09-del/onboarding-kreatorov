@@ -4,7 +4,10 @@
   'use strict';
 
   var CONTENT = 'content/';
-  var STORE = 'onb:';
+  var GSTORE = 'onb:';
+  var STORE = GSTORE;   // после входа: onb:u:<id>: — у каждого пользователя свой прогресс
+  var mem = {};         // запасное хранилище, если браузер закрыл localStorage (приватное окно)
+  var user = null;
   var site = null;
   var cache = {};
 
@@ -28,6 +31,22 @@
 
   // Иконки: Lucide (ISC) и Tabler «dental» (MIT), линейные 24×24
   var ICONS = {
+      "circle-play": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"m10 8 6 4-6 4z\"/>",
+      "compass": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z\"/>",
+      "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/> <circle cx=\"9\" cy=\"7\" r=\"4\"/> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/> <path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>",
+      "package": "<path d=\"m7.5 4.27 9 5.15\"/> <path d=\"M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z\"/> <path d=\"m3.3 7 8.7 5 8.7-5\"/> <path d=\"M12 22V12\"/>",
+      "message-circle": "<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/>",
+      "camera": "<path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/> <circle cx=\"12\" cy=\"13\" r=\"3\"/>",
+      "trending-up": "<path d=\"M22 7 13.5 15.5 8.5 10.5 2 17\"/> <path d=\"M16 7h6v6\"/>",
+      "clapperboard": "<path d=\"M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z\"/> <path d=\"m6.2 5.3 3.1 3.9\"/> <path d=\"m12.4 3.4 3.1 4\"/> <path d=\"M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z\"/>",
+      "graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/> <path d=\"M22 10v6\"/> <path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>",
+      "send": "<path d=\"m22 2-7 20-4-9-9-4Z\"/> <path d=\"M22 2 11 13\"/>",
+      "log-out": "<path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"/> <path d=\"m16 17 5-5-5-5\"/> <path d=\"M21 12H9\"/>",
+      "lock": "<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\"/> <path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>",
+      "zap": "<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>",
+      "flag": "<path d=\"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\"/> <path d=\"M4 22v-7\"/>",
+      "arrow-right": "<path d=\"M5 12h14\"/> <path d=\"m12 5 7 7-7 7\"/>",
+      "menu": "<path d=\"M4 6h16\"/> <path d=\"M4 12h16\"/> <path d=\"M4 18h16\"/>",
       "ban": "<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M4.929 4.929 19.07 19.071\"/>",
       "book-open": "<path d=\"M12 5v16\"/> <path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/>",
       "check": "<path d=\"M20 6 9 17l-5-5\"/>",
@@ -56,12 +75,21 @@
     return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
 
-  function load(key) {
-    try { return JSON.parse(localStorage.getItem(STORE + key)); } catch (e) { return null; }
+  function rawGet(k) {
+    try { var v = localStorage.getItem(k); if (v !== null) return v; } catch (e) { /* приватное окно */ }
+    return k in mem ? mem[k] : null;
   }
-  function save(key, val) {
-    try { localStorage.setItem(STORE + key, JSON.stringify(val)); } catch (e) { /* приватное окно */ }
+  function rawSet(k, v) { mem[k] = v; try { localStorage.setItem(k, v); } catch (e) { /* приватное окно */ } }
+  function rawDel(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) { /* приватное окно */ } }
+  function allKeys() {
+    var ks = Object.keys(mem);
+    try { ks = ks.concat(Object.keys(localStorage)); } catch (e) { /* приватное окно */ }
+    return ks;
   }
+  function load(key) { try { return JSON.parse(rawGet(STORE + key)); } catch (e) { return null; } }
+  function save(key, val) { rawSet(STORE + key, JSON.stringify(val)); }
+  function gload(key) { try { return JSON.parse(rawGet(GSTORE + key)); } catch (e) { return null; } }
+  function gsave(key, val) { rawSet(GSTORE + key, JSON.stringify(val)); }
 
   function fetchText(file) {
     if (cache[file]) return Promise.resolve(cache[file]);
@@ -75,6 +103,162 @@
     return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
+  }
+
+  /* ---------- вход и личный кабинет ---------- */
+  // Тестовый вход без пароля: имя становится ключом личного раздела в хранилище браузера.
+  // Пароли и общий сервер появятся позже; формат users/current менять тогда же.
+
+  var BRAND_OPTS = [
+    ['belukha', 'Предгорья Белухи', 'чай, иван-чай, мёд'],
+    ['biorepair', 'Biorepair®', 'зубные пасты и уход'],
+    ['all', 'Оба бренда', 'работаю с обоими']
+  ];
+
+  function userList() { return gload('users') || []; }
+  function userId(name) {
+    return name.toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, '-').replace(/[^a-zа-я0-9-]/g, '').slice(0, 40) || 'user';
+  }
+  function firstName(u) { return (u && u.name || '').split(/\s+/)[0]; }
+  function initials(name) {
+    return name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase();
+  }
+  function brandLabel(b) {
+    var o = BRAND_OPTS.find(function (x) { return x[0] === b; });
+    return o ? o[1] : 'Оба бренда';
+  }
+
+  function setUser(u) {
+    user = u;
+    STORE = u ? GSTORE + 'u:' + u.id + ':' : GSTORE;
+    document.body.classList.toggle('auth', !u);
+    renderUserMenu();
+  }
+
+  // Прогресс, накопленный до появления входа, достаётся первому вошедшему
+  function adoptLegacy(id) {
+    var pre = GSTORE + 'u:' + id + ':';
+    allKeys().forEach(function (k) {
+      if (k.indexOf(GSTORE) !== 0 || k.indexOf(GSTORE + 'u:') === 0) return;
+      var rest = k.slice(GSTORE.length);
+      if (rest === 'done' || rest === 'quiz' || rest === 'finished' || rest === 'brandPref' || rest.indexOf('checks:') === 0) {
+        if (rawGet(pre + rest) === null) rawSet(pre + rest, rawGet(k));
+        rawDel(k);
+      }
+    });
+  }
+
+  function login(name, brand) {
+    var list = userList();
+    var id = userId(name);
+    var u = list.find(function (x) { return x.id === id; });
+    if (!u) {
+      if (!list.length) adoptLegacy(id);
+      u = { id: id, name: name, brand: brand || 'all', created: Date.now() };
+      list.push(u);
+    } else if (brand) {
+      u.brand = brand;
+    }
+    u.last = Date.now();
+    gsave('users', list);
+    gsave('current', u.id);
+    setUser(u);
+    if (brand) save('brandPref', brand);
+  }
+
+  function logout() {
+    gsave('current', null);
+    setUser(null);
+    show();
+  }
+
+  function restoreUser() {
+    var id = gload('current');
+    var u = id && userList().find(function (x) { return x.id === id; });
+    setUser(u || null);
+  }
+
+  var menuCloser = null;
+  function renderUserMenu() {
+    var box = document.querySelector('.user-menu');
+    if (!box) return;
+    if (!user) { box.innerHTML = ''; return; }
+    box.innerHTML = '<button type="button" class="um-btn" aria-expanded="false" aria-haspopup="true">' +
+      '<span class="avatar" aria-hidden="true">' + esc(initials(user.name)) + '</span>' +
+      '<span class="um-name">' + esc(firstName(user)) + '</span></button>' +
+      '<div class="um-pop" hidden><p class="um-who"><b>' + esc(user.name) + '</b><span>' + esc(brandLabel(user.brand)) + '</span></p>' +
+      '<a class="um-item" href="#/home">' + icon('house') + 'Личный кабинет</a>' +
+      '<button type="button" class="um-item um-out">' + icon('log-out') + 'Сменить пользователя</button>' +
+      '<p class="um-note">' + icon('lock') + '<span>Тестовый вход без пароля. Прогресс хранится в этом браузере.</span></p></div>';
+    var btn = box.querySelector('.um-btn');
+    var pop = box.querySelector('.um-pop');
+    var close = function () { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      pop.hidden = !pop.hidden;
+      btn.setAttribute('aria-expanded', String(!pop.hidden));
+    });
+    pop.addEventListener('click', function (e) { e.stopPropagation(); if (e.target.closest('a')) close(); });
+    box.querySelector('.um-out').addEventListener('click', function () { close(); logout(); });
+    if (menuCloser) document.removeEventListener('click', menuCloser);
+    menuCloser = close;
+    document.addEventListener('click', menuCloser);
+  }
+
+  function renderLogin(root) {
+    var known = userList().slice().sort(function (a, b) { return (b.last || 0) - (a.last || 0); }).slice(0, 4);
+    var posters = (site.loginPosters || []).map(function (src) {
+      return '<img src="' + esc(src) + '" alt="">';
+    }).join('');
+    root.innerHTML = '<section class="login">' +
+      '<div class="login-art" aria-hidden="true"><div class="login-reels">' + posters + posters + '</div>' +
+      '<div class="login-art-cap"><b>Восемь роликов брендов, которые обогнали обычный результат в 4–368 раз.</b> Посмотрите их на первом шаге.</div></div>' +
+      '<div class="login-card">' +
+      '<div class="login-brand-row"><span class="logo-mark big"></span><span>Smart Beauty Hub</span></div>' +
+      '<h1>Добро пожаловать в команду креаторов</h1>' +
+      '<p class="lead">12 коротких шагов: от знакомства с брендами до первого ролика, который примут с первого раза.</p>' +
+      '<form class="login-form" novalidate>' +
+      '<label class="lf-label" for="lg-name">Как к вам обращаться</label>' +
+      '<input id="lg-name" class="lf-input" name="name" autocomplete="name" placeholder="Например, Анна Смирнова" maxlength="40" required>' +
+      '<p class="lf-err" role="alert" hidden></p>' +
+      '<fieldset class="lf-brands"><legend class="lf-label">С каким брендом работаете</legend>' +
+      BRAND_OPTS.map(function (o, i) {
+        return '<label class="lf-brand" data-b="' + o[0] + '"><input type="radio" name="brand" value="' + o[0] + '"' + (i === 2 ? ' checked' : '') + '>' +
+          '<span class="lfb-name">' + esc(o[1]) + '</span><span class="lfb-sub">' + esc(o[2]) + '</span></label>';
+      }).join('') + '</fieldset>' +
+      '<button class="btn big login-go" type="submit">Начать ' + icon('arrow-right') + '</button>' +
+      '</form>' +
+      (known.length ? '<div class="login-known"><p class="lf-label">Уже были здесь</p><div class="lk-list">' + known.map(function (u) {
+        return '<button type="button" class="lk" data-id="' + esc(u.id) + '"><span class="avatar" aria-hidden="true">' + esc(initials(u.name)) + '</span>' +
+          '<span class="lk-t"><b>' + esc(u.name) + '</b><small>' + esc(brandLabel(u.brand)) + '</small></span></button>';
+      }).join('') + '</div></div>' : '') +
+      '<p class="login-note">' + icon('lock') + '<span>Тестовый вход без пароля: прогресс хранится в этом браузере. На другом устройстве или после очистки браузера путь начнётся заново. Вход по паролю появится позже.</span></p>' +
+      '</div></section>';
+
+    var form = root.querySelector('.login-form');
+    var input = form.querySelector('#lg-name');
+    var err = form.querySelector('.lf-err');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = input.value.replace(/\s+/g, ' ').trim();
+      if (name.length < 2 || !/[a-zа-яё]/i.test(name)) {
+        err.textContent = 'Напишите имя, хотя бы две буквы: под ним сохранится ваш прогресс.';
+        err.hidden = false;
+        input.focus();
+        return;
+      }
+      var b = form.querySelector('input[name=brand]:checked');
+      login(name, b ? b.value : 'all');
+      show();
+    });
+    input.addEventListener('input', function () { err.hidden = true; });
+    root.querySelectorAll('.lk').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var u = userList().find(function (x) { return x.id === b.dataset.id; });
+        if (u) { login(u.name, null); show(); }
+      });
+    });
+    setTimeout(function () { input.focus({ preventScroll: true }); }, 50);
   }
 
   /* ---------- навигация и прогресс ---------- */
@@ -112,11 +296,9 @@
       }, 5000);
       return;
     }
-    try {
-      Object.keys(localStorage).forEach(function (k) {
-        if (k === STORE + 'done' || k === STORE + 'quiz' || k === STORE + 'finished' || k.indexOf(STORE + 'checks:') === 0) localStorage.removeItem(k);
-      });
-    } catch (e) { /* хранилище недоступно */ }
+    allKeys().forEach(function (k) {
+      if (k === STORE + 'done' || k === STORE + 'quiz' || k === STORE + 'finished' || k.indexOf(STORE + 'checks:') === 0) rawDel(k);
+    });
     location.hash = '#/home';
     show();
   }
@@ -386,6 +568,27 @@
 
     pairCallouts(root);
 
+    // Памятка из конца страницы встаёт наверх: сначала суть, потом подробности
+    var memo = root.querySelector('.callout.memo');
+    var h1 = root.querySelector('h1');
+    if (memo && h1) {
+      memo.querySelector('.callout-title').innerHTML = icon('zap') + 'Коротко: главное за 30 секунд';
+      var lead = h1.nextElementSibling && h1.nextElementSibling.tagName === 'P' ? h1.nextElementSibling : h1;
+      lead.after(memo);
+    }
+    // Ссылки на первоисточники нужны не всем: свёрнуты, раскрываются по клику
+    root.querySelectorAll('.callout.origin, .callout.source').forEach(function (box) {
+      var d = document.createElement('details');
+      d.className = box.className + ' fold';
+      var title = box.querySelector('.callout-title');
+      var s = document.createElement('summary');
+      s.innerHTML = title.innerHTML;
+      title.remove();
+      d.appendChild(s);
+      while (box.firstChild) d.appendChild(box.firstChild);
+      box.replaceWith(d);
+    });
+
     // Чек-листы: галочки запоминаются в браузере
     var checks = load('checks:' + page.id) || {};
     root.querySelectorAll('li > input[type=checkbox]').forEach(function (cb, i) {
@@ -475,8 +678,9 @@
       var cls = p.id === page.id ? 'cur' : (d[p.id] ? 'done' : '');
       return '<a href="#/' + p.id + '" class="' + cls + '" title="' + esc(p.title) + '" aria-label="Шаг ' + (i + 1) + ': ' + esc(p.title) + '"></a>';
     }).join('');
-    return '<div class="step-head"><p class="step-kicker"><b>Этап ' + page.stage + ' · ' + esc(stageName(page.stage)) + '</b>' +
-      '<span>Шаг ' + n + ' из ' + total + (page.time ? ' · ' + esc(page.time) : '') + '</span></p>' +
+    return '<div class="step-head"><div class="step-id">' + (page.icon ? '<span class="step-ico" aria-hidden="true">' + icon(page.icon) + '</span>' : '') +
+      '<p class="step-kicker"><b>Этап ' + page.stage + ' · ' + esc(stageName(page.stage)) + '</b>' +
+      '<span>Шаг ' + n + ' из ' + total + (page.time ? ' · ' + esc(page.time) : '') + '</span></p></div>' +
       '<nav class="step-dots" aria-label="Шаги онбординга">' + dots + '</nav></div>';
   }
 
@@ -526,6 +730,13 @@
     b.onclick = go;
   }
 
+  function readProgress() {
+    var bar = document.querySelector('.read-bar i');
+    if (!bar) return;
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (document.body.dataset.page === 'text' && h > 200 ? Math.min(100, Math.round(window.scrollY / h * 100)) : 0) + '%';
+  }
+
   /* ---------- главная ---------- */
 
   function tool(id, ico, name, text) {
@@ -542,23 +753,39 @@
     steps.forEach(function (p) { total += parseInt(p.time, 10) || 0; });
     var pct = Math.round(n / steps.length * 100);
 
-    var title = !nxt ? 'Онбординг пройден. Время первого ролика'
-      : n ? 'С возвращением! Продолжим с шага ' + stepNo(nxt)
-      : 'От знакомства с брендами до первого ролика';
-    var cta = !nxt
-      ? '<a class="btn big" href="#/test">Открыть итоговое задание</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>'
-      : '<a class="btn big" href="#/' + nxt.id + '">' + (n ? 'Продолжить' : 'Начать онбординг') + ' →</a>' +
-        '<span class="cta-note">' + (n ? 'Шаг ' + stepNo(nxt) + ': ' + esc(nxt.title) : 'Первый шаг займёт ' + esc(steps[0].time || '5 мин').replace('мин', 'минут')) + '</span>';
+    var hour = new Date().getHours();
+    var hello = hour < 5 ? 'Доброй ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер';
+    var left = 0;
+    steps.forEach(function (p) { if (!d[p.id]) left += parseInt(p.time, 10) || 0; });
+    var quiz = load('quiz');
+    var status = !nxt ? 'Маршрут пройден. Осталось главное: снять первый ролик и сдать его на проверку.'
+      : n ? 'Вы прошли ' + n + ' из ' + steps.length + ' шагов. Осталось около ' + (Math.round(left / 5) * 5) + ' минут.'
+      : 'Перед вами ' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. Начните с роликов: так быстрее понять, что мы снимаем.';
+    var R = 52, C = 2 * Math.PI * R;
+    var ring = '<div class="cab-ring" role="img" aria-label="Пройдено ' + pct + '%">' +
+      '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="' + R + '" class="rb"/>' +
+      '<circle cx="60" cy="60" r="' + R + '" class="rf" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/></svg>' +
+      '<span><b>' + pct + '%</b><small>' + n + ' из ' + steps.length + '</small></span></div>';
 
-    var hero = '<section class="home-hero">' +
-      '<p class="eyebrow">Smart Beauty Hub · онбординг креаторов Предгорий Белухи и Biorepair®</p>' +
-      '<h1>' + esc(title) + '</h1>' +
-      '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом — немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
-      '<div class="hero-cta">' + cta + '</div>' +
-      '<div class="hero-progress"><div class="progress-bar big" role="progressbar" aria-label="Прогресс онбординга" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
-      '<span>' + n + ' из ' + steps.length + ' шагов</span>' +
-      (n ? '<button type="button" class="hero-reset">Сбросить прогресс</button>' : '') + '</div>' +
-      '</section>';
+    var hero = '<section class="home-hero cabinet"><div class="cab-main">' +
+      '<p class="eyebrow">Личный кабинет · ' + esc(brandLabel(user && user.brand)) + '</p>' +
+      '<h1>' + esc(hello + ', ' + firstName(user) + '!') + '</h1>' +
+      '<p class="lead">' + esc(status) + '</p>' +
+      ((!nxt || n) ? '<div class="hero-cta">' + (nxt ? ''
+        : '<a class="btn big" href="#/sdacha">Как сдать первый ролик ' + icon('arrow-right') + '</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>') +
+      (n ? '<button type="button" class="hero-reset">Сбросить прогресс</button>' : '') + '</div>' : '') + '</div>' + ring + '</section>';
+
+    var nextCard = nxt ? '<a class="next-card" href="#/' + nxt.id + '">' +
+      '<span class="nc-ico" aria-hidden="true">' + icon(nxt.icon || 'flag') + '</span>' +
+      '<span class="nc-t"><small>' + (n ? 'Следующий шаг' : 'Первый шаг') + ' · этап ' + nxt.stage + ', ' + esc(stageName(nxt.stage)) + '</small>' +
+      '<b>' + esc(nxt.title) + '</b><em>' + icon('clock') + esc(nxt.time || '') + '</em></span>' +
+      '<span class="nc-go" aria-hidden="true">' + icon('arrow-right') + '</span></a>' : '';
+
+    var stats = '<div class="stats">' +
+      '<div class="stat"><span class="st-ico">' + icon('flag') + '</span><b>' + n + ' / ' + steps.length + '</b><small>шагов пройдено</small></div>' +
+      '<div class="stat"><span class="st-ico">' + icon('clock') + '</span><b>' + (left ? '≈ ' + (Math.round(left / 5) * 5) + ' мин' : 'готово') + '</b><small>до конца маршрута</small></div>' +
+      '<div class="stat"><span class="st-ico">' + icon('graduation-cap') + '</span><b>' + (quiz ? quiz.right + ' из ' + quiz.total : 'впереди') + '</b><small>итоговый тест</small></div>' +
+      '</div>';
 
     var stages = (site.stages || []).map(function (name, si) {
       var list = steps.filter(function (p) { return p.stage === si + 1; });
@@ -569,7 +796,7 @@
         '<div><h3>' + esc(name) + '</h3><p>' + (complete ? 'пройден' : sd + ' из ' + list.length) + '</p></div></div>' +
         '<ol>' + list.map(function (p) {
           var cls = d[p.id] ? 'done' : (nxt && nxt.id === p.id ? 'next' : '');
-          return '<li class="' + cls + '"><a href="#/' + p.id + '"><span class="dot" aria-hidden="true"></span>' +
+          return '<li class="' + cls + '"><a href="#/' + p.id + '"><span class="dot" aria-hidden="true">' + (d[p.id] ? icon('check') : icon(p.icon || 'flag')) + '</span>' +
             '<span class="t">' + esc(p.title) + (cls === 'next' ? '<em>сейчас</em>' : '') + '</span>' +
             '<span class="time">' + esc(p.time || '') + '</span></a></li>';
         }).join('') + '</ol></li>';
@@ -594,7 +821,7 @@
       tool('faq', 'circle-help', 'Вопросы и контакты', 'Процесс, сдача, правки и к кому обращаться') +
       '</div></section>';
 
-    root.innerHTML = hero +
+    root.innerHTML = hero + nextCard + stats +
       '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
     var hr = root.querySelector('.hero-reset');
@@ -952,6 +1179,16 @@
     var sub = parts[1] || '';
     var page = site.pages.find(function (p) { return p.id === id; }) || site.pages[0];
     var root = document.getElementById('main');
+    if (!user && page.id !== 'obnovlenie') {
+      document.body.dataset.brand = '';
+      document.body.dataset.page = 'login';
+      document.title = 'Вход · ' + site.title;
+      document.querySelector('.mobile-step').hidden = true;
+      closeMenu();
+      renderLogin(root);
+      window.scrollTo(0, 0);
+      return;
+    }
     document.body.dataset.brand = page.brand || '';
     document.body.dataset.page = page.type || 'text';
     document.title = (page.type === 'home' ? '' : page.title + ' · ') + site.title;
@@ -994,10 +1231,15 @@
     document.body.classList.remove('menu-open');
     menuBtn.setAttribute('aria-expanded', 'false');
   }
-  menuBtn.addEventListener('click', function () {
+  menuBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
     var open = document.body.classList.toggle('menu-open');
     menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
+  document.addEventListener('click', function (e) {
+    if (document.body.classList.contains('menu-open') && !e.target.closest('#nav')) closeMenu();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
 
   /* ---------- старт ---------- */
 
@@ -1006,7 +1248,9 @@
   fetchText('site.json').then(function (t) {
     site = JSON.parse(t);
     if (site.updated) document.querySelector('.updated').textContent = 'Обновлено: ' + site.updated;
+    restoreUser();
     window.addEventListener('hashchange', show);
+    window.addEventListener('scroll', readProgress, { passive: true });
     show();
   }).catch(function (err) {
     document.getElementById('main').innerHTML = '<p class="error">Не удалось загрузить content/site.json: ' + esc(err.message) + '</p>';

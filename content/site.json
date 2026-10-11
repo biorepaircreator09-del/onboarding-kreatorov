@@ -31,7 +31,8 @@
       "file": "roliki.md",
       "step": true,
       "stage": 1,
-      "time": "10 мин"
+      "time": "10 мин",
+      "icon": "circle-play"
     },
     {
       "id": "start",
@@ -39,7 +40,8 @@
       "file": "start.md",
       "step": true,
       "stage": 1,
-      "time": "15 мин"
+      "time": "15 мин",
+      "icon": "compass"
     },
     {
       "id": "auditoriya",
@@ -47,7 +49,8 @@
       "file": "auditoriya.md",
       "step": true,
       "stage": 2,
-      "time": "15 мин"
+      "time": "15 мин",
+      "icon": "users"
     },
     {
       "id": "produkt",
@@ -55,7 +58,8 @@
       "file": "produkt.md",
       "step": true,
       "stage": 2,
-      "time": "15 мин"
+      "time": "15 мин",
+      "icon": "package"
     },
     {
       "id": "golos",
@@ -63,7 +67,8 @@
       "file": "golos.md",
       "step": true,
       "stage": 2,
-      "time": "12 мин"
+      "time": "12 мин",
+      "icon": "message-circle"
     },
     {
       "id": "obrazy",
@@ -71,7 +76,8 @@
       "file": "obrazy.md",
       "step": true,
       "stage": 2,
-      "time": "20 мин"
+      "time": "20 мин",
+      "icon": "camera"
     },
     {
       "id": "primery",
@@ -79,7 +85,8 @@
       "file": "primery.md",
       "step": true,
       "stage": 3,
-      "time": "10 мин"
+      "time": "10 мин",
+      "icon": "trending-up"
     },
     {
       "id": "proizvodstvo",
@@ -87,7 +94,8 @@
       "file": "proizvodstvo.md",
       "step": true,
       "stage": 4,
-      "time": "15 мин"
+      "time": "15 мин",
+      "icon": "clapperboard"
     },
     {
       "id": "scenariy",
@@ -95,7 +103,8 @@
       "file": "scenariy.md",
       "step": true,
       "stage": 5,
-      "time": "30 мин"
+      "time": "30 мин",
+      "icon": "file-pen-line"
     },
     {
       "id": "cheklist",
@@ -103,7 +112,8 @@
       "file": "cheklist.md",
       "step": true,
       "stage": 5,
-      "time": "10 мин"
+      "time": "10 мин",
+      "icon": "list-checks"
     },
     {
       "id": "test",
@@ -112,7 +122,8 @@
       "step": true,
       "stage": 5,
       "time": "15 мин",
-      "type": "quiz"
+      "type": "quiz",
+      "icon": "graduation-cap"
     },
     {
       "id": "sdacha",
@@ -120,7 +131,8 @@
       "file": "sdacha.md",
       "step": true,
       "stage": 6,
-      "time": "8 мин"
+      "time": "8 мин",
+      "icon": "send"
     },
     {
       "id": "katalog-belukha",
@@ -175,5 +187,15 @@
     "raznica": "start",
     "biblioteka": "materialy",
     "shablony": "materialy"
-  }
+  },
+  "loginPosters": [
+    "video/DddR1gxtb-1.jpg",
+    "video/Db5u6MfM_0O.jpg",
+    "video/DdWluSmIuy6.jpg",
+    "video/DcBZZIHuFnY.jpg",
+    "video/DdygzN1K5C6.jpg",
+    "video/DcT0xJxO6nO.jpg",
+    "video/Dd3Rc7eodj-.jpg",
+    "video/Dc3STRSOFsH.jpg"
+  ]
 }
