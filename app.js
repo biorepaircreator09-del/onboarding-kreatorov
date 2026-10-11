@@ -331,10 +331,10 @@
         stage = p.stage;
         html += '<li class="nav-stage">' + esc(stage + '. ' + stageName(stage)) + '</li>';
       }
-      var state = d[p.id] ? 'done' : (nxt && nxt.id === p.id ? 'next' : '');
+      var state = d[p.id] === 'skip' ? 'skipped' : d[p.id] ? 'done' : (nxt && nxt.id === p.id ? 'next' : '');
       html += '<li class="nav-step ' + state + '">' + navLink(p, activeId,
-        '<span class="num" aria-hidden="true">' + (d[p.id] ? '✓' : (i + 1)) + '</span>' +
-        '<span class="t">' + esc(p.title) + (d[p.id] ? '<span class="sr"> (пройден)</span>' : '') + '</span>') + '</li>';
+        '<span class="num" aria-hidden="true">' + (state === 'skipped' ? '!' : d[p.id] ? '✓' : (i + 1)) + '</span>' +
+        '<span class="t">' + esc(p.title) + (state === 'skipped' ? '<span class="sr"> (пропущен)</span>' : d[p.id] ? '<span class="sr"> (пройден)</span>' : '') + '</span>') + '</li>';
     });
     html += '</ol>';
 
@@ -457,7 +457,7 @@
   // ```вопрос: упражнение с мгновенной проверкой.
   // Первые строки: вопрос, «- вариант» (звёздочка * в конце у верного), «= объяснение».
   var qCounter = 0;
-  function renderQuestion(code) {
+  function renderQuestion(code, idx, page) {
     var q = [], opts = [], explain = '';
     code.textContent.split('\n').forEach(function (line) {
       var t = line.trim();
@@ -478,10 +478,16 @@
       '<div class="iq-opts">' + opts.map(function (o, i) {
         return '<button type="button" class="iq-opt" data-i="' + i + '">' + inline(o.text) + '</button>';
       }).join('') + '</div><p class="iq-explain" role="status" aria-live="polite" hidden></p>';
+    var key = page ? 'answers:' + page.id : null;
+    box.dataset.qi = idx;
     box.addEventListener('click', function (e) {
       var b = e.target.closest('.iq-opt');
       if (!b) return;
       var i = +b.dataset.i;
+      box.classList.add('answered');
+      box.classList.remove('need');
+      if (key) { var a = load(key) || {}; a[idx] = i; save(key, a); }
+      box.dispatchEvent(new CustomEvent('answered', { bubbles: true }));
       box.querySelectorAll('.iq-opt').forEach(function (x, j) {
         x.classList.toggle('right', opts[j].right && (j === i || opts[i].right));
         x.classList.toggle('wrong', j === i && !opts[j].right);
@@ -494,6 +500,8 @@
     });
     box.id = id;
     code.parentElement.replaceWith(box);
+    var prev = key ? (load(key) || {})[idx] : undefined;
+    if (prev !== undefined && box.querySelector('.iq-opt[data-i="' + prev + '"]')) box.querySelector('.iq-opt[data-i="' + prev + '"]').click();
   }
 
   // ```выбор-бренда: большие карточки выбора, сохраняются для всего курса
@@ -542,7 +550,19 @@
   function enhance(root, page) {
     // Блок ```socials belukha``` превращается в карточки соцсетей
     root.querySelectorAll('pre > code.language-persona').forEach(renderPersona);
-    root.querySelectorAll('pre > code.language-вопрос').forEach(renderQuestion);
+    root.querySelectorAll('pre > code.language-вопрос').forEach(function (c, i) { renderQuestion(c, i, page); });
+    // Ролики: какие уже смотрели (нужно для шага «Какие ролики мы снимаем?»)
+    var seen = load('watched:' + page.id) || {};
+    root.querySelectorAll('.reel video').forEach(function (v) {
+      var src = v.getAttribute('src');
+      if (seen[src]) v.closest('.reel').classList.add('seen');
+      v.addEventListener('play', function () {
+        seen[src] = true;
+        save('watched:' + page.id, seen);
+        v.closest('.reel').classList.add('seen');
+        root.dispatchEvent(new CustomEvent('answered', { bubbles: true }));
+      });
+    });
     root.querySelectorAll('pre > code.language-выбор-бренда').forEach(renderBrandPicker);
     root.querySelectorAll('pre > code.language-socials').forEach(function (code) {
       var holder = document.createElement('div');
@@ -704,15 +724,93 @@
     d[id] = true;
     save('done', d);
   }
+  // Пропущенный шаг считается пройденным для маршрута, но помечается: к нему стоит вернуться
+  function markSkipped(id) {
+    var d = doneSet();
+    if (d[id] !== true) d[id] = 'skip';
+    save('done', d);
+  }
+
+  // Что ещё не сделано на шаге: обязательные вопросы (кроме свёрнутых «Подробнее»), ролики, тест
+  function pending(root, page) {
+    if (page.type === 'quiz') {
+      return load('quiz') ? null : { text: 'Сначала пройдите тест: ответьте на вопросы и нажмите «Проверить».', target: root.querySelector('.quiz .q') };
+    }
+    var reels = root.querySelectorAll('.reel video');
+    if (reels.length) {
+      var seen = root.querySelectorAll('.reel.seen').length;
+      var need = Math.min(2, reels.length);
+      if (seen < need) return { text: 'Сначала посмотрите хотя бы ' + (need === 2 ? 'два ролика' : 'один ролик') + ' — так будет понятно, о чём следующие шаги. Просмотрено: ' + seen + ' из ' + need + '.', target: root.querySelector('.reel:not(.seen)') };
+    }
+    var qs = Array.prototype.filter.call(root.querySelectorAll('.iq'), function (q) { return !q.closest('details.more') && !q.closest('.brand-sec.other:not(.open)'); });
+    var left = qs.filter(function (q) { return !q.classList.contains('answered'); });
+    if (left.length) return { text: 'Сначала ответьте на ' + (qs.length === 1 ? 'вопрос' : 'вопросы') + ' на этой странице: осталось ' + left.length + ' из ' + qs.length + '.', target: left[0] };
+    return null;
+  }
 
   function bindStep(root, page) {
     if (!page.step) return;
     var btn = root.querySelector('.go-next');
-    var go = function () {
-      markDone(page.id);
+    var msg = document.createElement('p');
+    msg.className = 'gate-msg';
+    msg.setAttribute('role', 'alert');
+    msg.hidden = true;
+    btn.closest('.sf-next').appendChild(msg);
+    var stage = 0;            // 0 — ещё не пытались, 1 — показали красное, 2 — показали жёлтое
+    var label = btn.innerHTML;
+    var bar = document.querySelector('.mobile-step');
+    var mb = bar.querySelector('.ms-next');
+    var next = routePages()[stepNo(page)];
+    var mbLabel = next ? 'Дальше →' : 'Завершить →';
+    var reset = function () {
+      stage = 0; msg.hidden = true; msg.className = 'gate-msg';
+      btn.innerHTML = label; btn.classList.remove('warn');
+      mb.textContent = mbLabel; bar.classList.remove('warn', 'red');
+    };
+    var showTarget = function (el) {
+      if (!el) return;
+      el.classList.remove('need');
+      void el.offsetWidth;
+      el.classList.add('need');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () { el.classList.remove('need'); }, 2400);
+    };
+    var go = function (e) {
+      var fromBar = e && e.currentTarget === mb;
+      var p = doneSet()[page.id] === true ? null : pending(root, page);
+      if (p && stage === 0) {
+        stage = 1;
+        msg.className = 'gate-msg red';
+        msg.innerHTML = icon('triangle-alert') + '<span>' + esc(p.text) + (p.target ? ' <button type="button" class="gate-show">Показать ↑</button>' : '') + '</span>';
+        msg.hidden = false;
+        var sb = msg.querySelector('.gate-show');
+        if (sb) sb.addEventListener('click', function () { showTarget(pending(root, page) && pending(root, page).target); });
+        bar.classList.add('red');
+        mb.textContent = 'Ответьте выше ↑';
+        if (p.target) p.target.classList.add('need');
+        setTimeout(function () { if (p.target) p.target.classList.remove('need'); }, 2400);
+        if (fromBar) showTarget(p.target);
+        return;
+      }
+      if (p && stage === 1) {
+        stage = 2;
+        msg.className = 'gate-msg warn';
+        msg.innerHTML = icon('circle-help') + '<span><b>Точно пропустить и пройти дальше?</b> Шаг отметится как пропущенный: в меню он будет оранжевым, к нему можно вернуться. Нажмите ещё раз, чтобы перейти.</span>';
+        btn.innerHTML = 'Да, пропустить и перейти ' + icon('arrow-right');
+        btn.classList.add('warn');
+        bar.classList.remove('red'); bar.classList.add('warn');
+        mb.textContent = 'Да, пропустить →';
+        if (fromBar) msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (p) markSkipped(page.id); else markDone(page.id);
       location.hash = '#/' + btn.dataset.next;
     };
     btn.addEventListener('click', go);
+    // Сделали интерактивную часть — предупреждения больше не нужны
+    root.addEventListener('answered', function () { if (stage && !pending(root, page)) reset(); });
+    var qform = root.querySelector('form.quiz');
+    if (qform) qform.addEventListener('submit', function () { setTimeout(function () { if (stage && !pending(root, page)) reset(); }, 0); });
     var undo = root.querySelector('.undo-step');
     if (undo) undo.addEventListener('click', function () {
       var d = doneSet();
@@ -721,13 +819,10 @@
       show();
     });
     // Нижняя панель на телефоне: следующий шаг всегда под пальцем
-    var bar = document.querySelector('.mobile-step');
-    var next = routePages()[stepNo(page)];
     bar.hidden = false;
     bar.querySelector('.ms-pos').textContent = 'Шаг ' + stepNo(page) + ' из ' + routePages().length;
-    var b = bar.querySelector('.ms-next');
-    b.textContent = next ? 'Дальше →' : 'Завершить →';
-    b.onclick = go;
+    reset();
+    mb.onclick = go;
   }
 
   function readProgress() {
@@ -758,6 +853,7 @@
     var left = 0;
     steps.forEach(function (p) { if (!d[p.id]) left += parseInt(p.time, 10) || 0; });
     var quiz = load('quiz');
+    var skipped = steps.filter(function (p) { return d[p.id] === 'skip'; }).length;
     var status = !nxt ? 'Маршрут пройден. Осталось главное: снять первый ролик и сдать его на проверку.'
       : n ? 'Вы прошли ' + n + ' из ' + steps.length + ' шагов. Осталось около ' + (Math.round(left / 5) * 5) + ' минут.'
       : steps.length + ' коротких шагов, около ' + (Math.round(total / 5) * 5) + ' минут. Первый шаг — восемь лучших роликов брендов: посмотрите их, и станет ясно, что мы снимаем.';
@@ -787,7 +883,7 @@
       '<span class="nc-go" aria-hidden="true">' + icon('arrow-right') + '</span></a>' : '';
 
     var stats = '<div class="stats">' +
-      '<div class="stat"><span class="st-ico">' + icon('flag') + '</span><b>' + n + ' / ' + steps.length + '</b><small>шагов пройдено</small></div>' +
+      '<div class="stat"><span class="st-ico">' + icon('flag') + '</span><b>' + n + ' / ' + steps.length + '</b><small>шагов пройдено' + (skipped ? ', ' + skipped + ' пропущено' : '') + '</small></div>' +
       '<div class="stat"><span class="st-ico">' + icon('clock') + '</span><b>' + (left ? '≈ ' + (Math.round(left / 5) * 5) + ' мин' : 'готово') + '</b><small>до конца маршрута</small></div>' +
       '<div class="stat"><span class="st-ico">' + icon('graduation-cap') + '</span><b>' + (quiz ? quiz.right + ' из ' + quiz.total : 'впереди') + '</b><small>итоговый тест</small></div>' +
       '</div>';
@@ -800,8 +896,8 @@
         '<div class="stage-head"><span class="stage-no" aria-hidden="true">' + (complete ? '✓' : si + 1) + '</span>' +
         '<div><h3>' + esc(name) + '</h3><p>' + (complete ? 'пройден' : sd + ' из ' + list.length) + '</p></div></div>' +
         '<ol>' + list.map(function (p) {
-          var cls = d[p.id] ? 'done' : (nxt && nxt.id === p.id ? 'next' : '');
-          return '<li class="' + cls + '"><a href="#/' + p.id + '"><span class="dot" aria-hidden="true">' + (d[p.id] ? icon('check') : icon(p.icon || 'flag')) + '</span>' +
+          var cls = d[p.id] === 'skip' ? 'skipped' : d[p.id] ? 'done' : (nxt && nxt.id === p.id ? 'next' : '');
+          return '<li class="' + cls + '"><a href="#/' + p.id + '"><span class="dot" aria-hidden="true">' + (cls === 'skipped' ? icon('triangle-alert') : d[p.id] ? icon('check') : icon(p.icon || 'flag')) + '</span>' +
             '<span class="t">' + esc(p.title) + (cls === 'next' ? '<em>сейчас</em>' : '') + '</span>' +
             '<span class="time">' + esc(p.time || '') + '</span></a></li>';
         }).join('') + '</ol></li>';

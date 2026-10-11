@@ -741,3 +741,22 @@ body[data-page="home"] .continue { display: none; }
 .md details.more > summary + * { margin-top: 14px; }
 .md details.more { padding: 0; }
 .md details.more > summary { margin: 0; min-height: 0; }
+
+/* v4.4: шаг нельзя пролистать с первого клика */
+.gate-msg { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0 0; padding: 12px 14px; border-radius: 14px; font-size: 14.5px; font-weight: 600; line-height: 1.45; animation: gate-in .25s ease; }
+.gate-msg .ico { flex: none; width: 20px; height: 20px; margin-top: 1px; }
+.gate-msg.red { background: var(--no-soft); color: var(--no); border: 1.5px solid color-mix(in srgb, var(--no) 35%, transparent); }
+.gate-msg.warn { background: #fff6d6; color: #7a5a00; border: 1.5px solid #f2c94c; font-weight: 500; }
+.gate-msg.warn b { font-weight: 800; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.go-next.warn { background: #f2b705; border-color: #f2b705; color: #2b2200; }
+.iq.need, .reel.need, .quiz .q.need { animation: need-pulse 1.2s ease 2; border-radius: 16px; }
+@keyframes need-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(180,35,42,0); } 50% { box-shadow: 0 0 0 6px rgba(180,35,42,.35); } }
+.iq.answered .iq-kicker::after { content: "отвечено ✓"; margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: var(--yes-soft); color: var(--yes); font-size: 11px; letter-spacing: 0; text-transform: none; }
+.reel.seen figcaption b::after { content: " · просмотрено ✓"; color: var(--yes); font-weight: 700; }
+.nav-step.skipped .num { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+.stage li.skipped .dot { background: #f59e0b; color: #fff; }
+.mobile-step.red .ms-next { background: var(--no); border-color: var(--no); }
+.mobile-step.warn .ms-next { background: #f2b705; border-color: #f2b705; color: #2b2200; }
+.gate-show { margin-left: 4px; padding: 2px 10px; border: 1.5px solid currentColor; border-radius: 99px; background: #fff; color: inherit; font: 700 13px/1.4 var(--font-body); cursor: pointer; }
+.gate-show:hover { background: var(--no); color: #fff; border-color: var(--no); }
