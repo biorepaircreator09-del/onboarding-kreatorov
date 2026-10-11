@@ -774,3 +774,15 @@ body[data-page="home"] .continue { display: none; }
 .md .src-chip { display: inline-flex; align-items: center; padding: 5px 12px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 600; line-height: 1.3; text-decoration: none; transition: border-color .15s, background .15s, color .15s; }
 .md .src-chip::after { content: "↗"; margin-left: 6px; font-size: 12px; color: var(--muted); }
 .md .src-chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+/* v4.7: итоговый набор материалов в конце курса */
+.md .kit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 20px; }
+.md .kit h3 { grid-column: auto; margin: 0 0 10px; font-size: 15px; }
+.md .kit > h3 + ul { margin: 0; }
+.md .kit { grid-auto-flow: dense; }
+.md .kit ul { list-style: none; padding: 0; }
+.md .kit li { margin: 0 0 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.md .kit li a { font-weight: 700; }
+@media (max-width: 900px) { .md .kit { grid-template-columns: minmax(0, 1fr); } }
+.md .kit { grid-template-rows: auto 1fr; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; column-gap: 16px; row-gap: 0; padding: 18px; border-radius: 20px; background: linear-gradient(135deg, var(--belukha-soft), var(--bio-soft)); }
+@media (max-width: 900px) { .md .kit { grid-template-rows: none; grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); } .md .kit h3 { margin-top: 12px; } }

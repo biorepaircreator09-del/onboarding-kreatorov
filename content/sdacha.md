@@ -118,5 +118,41 @@
 
 </details>
 
+## Всё для работы: закрепите материалы
+
+Курс пройден. Здесь собрано всё, к чему вы будете возвращаться в работе: документы брендов и инструменты этого сайта. Сохраните страницу в закладки.
+
+<div class="kit">
+
+### Общее для обоих брендов
+
+- [Гайд по образам «Мир, в котором хочется оказаться»](files/gajd-obrazy.pdf) — философия кадра за 7 минут, PDF
+- [Обучение по образам](https://disk.yandex.ru/i/mrJkzbWlHI-lEg) — презентация: какие образы берём, какие нет
+- [Регламент «Станиславский» и гайд по поиску квартиры](https://disk.yandex.ru/d/_GlkFVbiTTaDdA) — в папке бренд-материалов
+- [Шаблон сценария](#/scenariy) — сцены, речь и текст на экране дословно
+- [Чек-лист перед отправкой](#/cheklist) — пройдите перед каждой сдачей
+- [Можно и нельзя](#/pravila) — все правила обоих брендов на одной странице
+- Примеры документов съёмки: [таблица проекта](files/primer-tablica-proekta.xlsx), [шутинг-план](files/primer-shuting-plan.xlsx), [смета](files/primer-smeta.xlsx)
+
+### Предгорья Белухи
+
+- [Брендбук](https://disk.yandex.ru/i/ipab717D5g-Htw) — ценности, тон, цвета, логотип
+- [Анализ целевой аудитории](https://docs.google.com/spreadsheets/d/1igThcr20Z2lL2aQPKUtG9XePB8yQOulFLIZRotm2ZJ0/edit) — сегменты, вопросы и отзывы покупателей
+- [Позиции чая и история бренда](https://docs.google.com/document/d/1wwTH4MAHlyY4zSwd3XbT5-nQdajXz7C5Kd6qGbkeK2w/edit) — что говорить о каждом вкусе
+- [Структура сценария от бренда](https://docs.google.com/document/d/1VMnOfX-uv5XKQHQDVftvFb452vwSqNxZ/edit)
+- [Каталог на этом сайте](#/katalog-belukha) — все позиции с идеями роликов
+
+### Biorepair®
+
+- [Брендбук](https://disk.yandex.ru/i/R_bBjRFJX-Rg8w) — ценности, тон, цвета, логотип
+- [Описание продуктов](https://docs.google.com/document/d/1iRf4kESJIC-wX_34fO5lFHnZiIHXnx3FFmYfDO7FsOg/edit) — свойства берём только отсюда
+- Портреты аудитории: [ночная паста](https://docs.google.com/document/d/1XHyjJuZIOKouDbYH_Kk4TKRphF2wxOP39c1Cujp-BmI/edit), [Pro White](https://docs.google.com/document/d/19DfDZqlCCuTqv89PfpGtCqYBtRhfQO-lj6CVvK-uoSo/edit), [дёсны](https://docs.google.com/document/d/1uRLiL1J1Xvrbst-OAkKb3XbiHfHP8Atvp56L9C89fwY/edit), [молодые родители](https://docs.google.com/document/d/1g1psxRZuFK_SshvkJt3_84LFSlaGyhZBiny-YDcK5XU/edit)
+- [Промпт проверки Tone of Voice](https://docs.google.com/document/d/1_a_0v5Vf6DQEnNLa8gDCxtRh287gL22RPE2CFQ7AB3E/edit) и [чек-лист модерации](https://docs.google.com/document/d/1rmS54apY-zYRlN0CgSK8MeRJMWn7NtjZPjLyLOct0e8/edit) — по ним проверяют ролик
+- [Каталог на этом сайте](#/katalog-biorepair) — чем отличается каждый продукт и как о нём говорить
+
+</div>
+
+Остались вопросы — [к кому обращаться](#/faq). Логотипы, шрифты, фото продукции и шаблоны постов лежат на странице [«Рабочие материалы»](#/materialy).
+
 > [!ПАМЯТКА]
 > Отправка одним сообщением по шаблону. Сначала сценарий, потом ролик. После правок — весь чек-лист заново. Публикуете у себя? Уточните маркировку до публикации.
