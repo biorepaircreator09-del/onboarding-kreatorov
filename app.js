@@ -626,17 +626,45 @@
       var lead = h1.nextElementSibling && h1.nextElementSibling.tagName === 'P' ? h1.nextElementSibling : h1;
       lead.after(memo);
     }
-    // Ссылки на первоисточники нужны не всем: свёрнуты, раскрываются по клику
+    // Первоисточники — компактной строкой ссылок на виду, в своём разделе.
+    // Пересказ из «Подробнее» никто не читает, а ссылка на брендбук нужна под рукой.
     root.querySelectorAll('.callout.origin, .callout.source').forEach(function (box) {
-      var d = document.createElement('details');
-      d.className = box.className + ' fold';
-      var title = box.querySelector('.callout-title');
-      var s = document.createElement('summary');
-      s.innerHTML = title.innerHTML;
-      title.remove();
-      d.appendChild(s);
-      while (box.firstChild) d.appendChild(box.firstChild);
-      box.replaceWith(d);
+      var chips = [];
+      var seen = {};
+      box.querySelectorAll('li, p').forEach(function (item) {
+        if (item.classList.contains('callout-title') || (item.tagName === 'P' && item.closest('li'))) return;
+        var links = item.querySelectorAll('a[href]');
+        if (!links.length) return;
+        // Короткая подпись: документ, если он назван («Брендбук «Предгорья Белухи», стр. 5»), иначе тема («Анализ ЦА»)
+        var clone = item.cloneNode(true);
+        clone.querySelectorAll('a, ul, code').forEach(function (x) { x.remove(); });
+        var text = clone.textContent.replace(/\s+/g, ' ').replace(/\(\s*(файл\s+)?в?\s*\)/g, '').trim();
+        var m = text.match(/^(.*?)(?::\s|\s[—–]\s)(.*)$/);
+        var topic = (m ? m[1] : text).replace(/\s*\([^)]*\)/g, '').replace(/^[-•\s]+/, '').trim();
+        var rest = m ? m[2] : '';
+        var page = (rest.match(/стр\.\s*[\d–-]+/) || [''])[0];
+        var doc = rest.split(/,|\(|\sстр\.|\sв\s|:/)[0].replace(/^файл\s+/i, '').replace(/[\s.—–-]+$/, '').trim();
+        topic = topic.replace(/[\s:·,.—–-]+$/, '');
+        doc = doc.replace(/\s+в$/, '');
+        var isDoc = /брендбук|регламент|промпт|бриф|презентац|гайд|таблиц|концепц|портрет|днк|сайт|«/i.test(doc);
+        var base = isDoc && doc.length >= 4 ? doc.charAt(0).toUpperCase() + doc.slice(1) + (page ? ', ' + page : '') : (topic || doc);
+        var generic = /^(открыть|скачать|смотреть|ещё|папка|папке.*|google.*|\d+)$/i;
+        links.forEach(function (a, i) {
+          var href = a.getAttribute('href');
+          if (seen[href]) return;
+          seen[href] = true;
+          var txt = a.textContent.trim();
+          var name = links.length > 1 ? (generic.test(txt) ? topic + ' ' + (i + 1) : txt.charAt(0).toUpperCase() + txt.slice(1)) : (base || txt);
+          if (name.length > 52) name = name.slice(0, 50).replace(/\s+\S*$/, '') + '…';
+          chips.push('<a class="src-chip" href="' + esc(href) + '" title="' + esc(item.textContent.replace(/\s+/g, ' ').trim()) + '">' + esc(name) + '</a>');
+        });
+      });
+      if (!chips.length) { box.remove(); return; }
+      var row = document.createElement('div');
+      row.className = 'sources';
+      row.innerHTML = '<span class="src-label">' + icon('book-open') + 'Первоисточники</span>' + chips.join('');
+      var fold = box.closest('details.more');
+      if (fold) { fold.after(row); box.remove(); } else box.replaceWith(row);
     });
 
     // Чек-листы: галочки запоминаются в браузере
@@ -1378,7 +1406,8 @@
 
   fetchText('site.json').then(function (t) {
     site = JSON.parse(t);
-    if (site.updated) document.querySelector('.updated').textContent = 'Обновлено: ' + site.updated;
+    var upd = document.querySelector('.updated');
+    if (site.updated && upd) upd.textContent = 'Обновлено: ' + site.updated;
     restoreUser();
     window.addEventListener('hashchange', show);
     window.addEventListener('scroll', readProgress, { passive: true });
