@@ -760,7 +760,7 @@
     var quiz = load('quiz');
     var status = !nxt ? 'Маршрут пройден. Осталось главное: снять первый ролик и сдать его на проверку.'
       : n ? 'Вы прошли ' + n + ' из ' + steps.length + ' шагов. Осталось около ' + (Math.round(left / 5) * 5) + ' минут.'
-      : 'Перед вами ' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. Начните с роликов: так быстрее понять, что мы снимаем.';
+      : steps.length + ' коротких шагов, около ' + (Math.round(total / 5) * 5) + ' минут. Первый шаг — восемь лучших роликов брендов: посмотрите их, и станет ясно, что мы снимаем.';
     var R = 52, C = 2 * Math.PI * R;
     var ring = '<div class="cab-ring" role="img" aria-label="Пройдено ' + pct + '%">' +
       '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="' + R + '" class="rb"/>' +
@@ -771,6 +771,11 @@
       '<p class="eyebrow">Личный кабинет · ' + esc(brandLabel(user && user.brand)) + '</p>' +
       '<h1>' + esc(hello + ', ' + firstName(user) + '!') + '</h1>' +
       '<p class="lead">' + esc(status) + '</p>' +
+      (nxt ? '<a class="hero-go" href="#/' + nxt.id + '">' +
+        '<span class="hg-ico" aria-hidden="true">' + icon(n ? 'arrow-right' : 'circle-play') + '</span>' +
+        '<span class="hg-t"><b>' + (n ? 'Продолжить обучение' : 'Начать обучение') + '</b>' +
+        '<small>Шаг ' + stepNo(nxt) + ' из ' + steps.length + ': ' + esc(nxt.title) + (nxt.time ? ' · ' + esc(nxt.time) : '') + '</small></span>' +
+        '<span class="hg-arrow" aria-hidden="true">' + icon('arrow-right') + '</span></a>' : '') +
       ((!nxt || n) ? '<div class="hero-cta">' + (nxt ? ''
         : '<a class="btn big" href="#/sdacha">Как сдать первый ролик ' + icon('arrow-right') + '</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>') +
       (n ? '<button type="button" class="hero-reset">Сбросить прогресс</button>' : '') + '</div>' : '') + '</div>' + ring + '</section>';
@@ -821,7 +826,7 @@
       tool('faq', 'circle-help', 'Вопросы и контакты', 'Процесс, сдача, правки и к кому обращаться') +
       '</div></section>';
 
-    root.innerHTML = hero + nextCard + stats +
+    root.innerHTML = hero + stats +
       '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
     var hr = root.querySelector('.hero-reset');

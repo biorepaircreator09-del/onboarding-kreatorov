@@ -31,7 +31,7 @@
       "file": "roliki.md",
       "step": true,
       "stage": 1,
-      "time": "10 мин",
+      "time": "5 мин",
       "icon": "circle-play"
     },
     {
@@ -40,7 +40,7 @@
       "file": "start.md",
       "step": true,
       "stage": 1,
-      "time": "15 мин",
+      "time": "4 мин",
       "icon": "compass"
     },
     {
@@ -49,7 +49,7 @@
       "file": "auditoriya.md",
       "step": true,
       "stage": 2,
-      "time": "15 мин",
+      "time": "5 мин",
       "icon": "users"
     },
     {
@@ -58,7 +58,7 @@
       "file": "produkt.md",
       "step": true,
       "stage": 2,
-      "time": "15 мин",
+      "time": "4 мин",
       "icon": "package"
     },
     {
@@ -67,7 +67,7 @@
       "file": "golos.md",
       "step": true,
       "stage": 2,
-      "time": "12 мин",
+      "time": "4 мин",
       "icon": "message-circle"
     },
     {
@@ -76,7 +76,7 @@
       "file": "obrazy.md",
       "step": true,
       "stage": 2,
-      "time": "20 мин",
+      "time": "4 мин",
       "icon": "camera"
     },
     {
@@ -85,7 +85,7 @@
       "file": "primery.md",
       "step": true,
       "stage": 3,
-      "time": "10 мин",
+      "time": "3 мин",
       "icon": "trending-up"
     },
     {
@@ -94,7 +94,7 @@
       "file": "proizvodstvo.md",
       "step": true,
       "stage": 4,
-      "time": "15 мин",
+      "time": "4 мин",
       "icon": "clapperboard"
     },
     {
@@ -103,7 +103,7 @@
       "file": "scenariy.md",
       "step": true,
       "stage": 5,
-      "time": "30 мин",
+      "time": "3 мин",
       "icon": "file-pen-line"
     },
     {
@@ -112,7 +112,7 @@
       "file": "cheklist.md",
       "step": true,
       "stage": 5,
-      "time": "10 мин",
+      "time": "3 мин",
       "icon": "list-checks"
     },
     {
@@ -121,7 +121,7 @@
       "file": "quiz.json",
       "step": true,
       "stage": 5,
-      "time": "15 мин",
+      "time": "8 мин",
       "type": "quiz",
       "icon": "graduation-cap"
     },
@@ -131,7 +131,7 @@
       "file": "sdacha.md",
       "step": true,
       "stage": 6,
-      "time": "8 мин",
+      "time": "3 мин",
       "icon": "send"
     },
     {
