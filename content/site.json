@@ -13,11 +13,9 @@
   ],
   "stages": [
     "Знакомство",
-    "Продукт и правила",
-    "Хорошие примеры",
-    "Производство",
-    "Практика и тест",
-    "Первый ролик"
+    "Бренды и правила",
+    "Как мы работаем",
+    "Проверка"
   ],
   "pages": [
     {
@@ -80,38 +78,20 @@
       "icon": "camera"
     },
     {
-      "id": "primery",
-      "title": "Почему эти ролики работают?",
-      "file": "primery.md",
-      "step": true,
-      "stage": 3,
-      "time": "3 мин",
-      "icon": "trending-up"
-    },
-    {
       "id": "proizvodstvo",
-      "title": "Как рождается ролик: от брифа до аналитики?",
+      "title": "Как мы работаем: от брифа до публикации?",
       "file": "proizvodstvo.md",
       "step": true,
-      "stage": 4,
+      "stage": 3,
       "time": "4 мин",
       "icon": "clapperboard"
     },
     {
-      "id": "scenariy",
-      "title": "Как написать сценарий первого ролика?",
-      "file": "scenariy.md",
-      "step": true,
-      "stage": 5,
-      "time": "5 мин",
-      "icon": "file-pen-line"
-    },
-    {
       "id": "cheklist",
-      "title": "Как снять, смонтировать и проверить?",
+      "title": "Чек-лист перед отправкой",
       "file": "cheklist.md",
       "step": true,
-      "stage": 5,
+      "stage": 4,
       "time": "3 мин",
       "icon": "list-checks"
     },
@@ -120,19 +100,10 @@
       "title": "Я готов?",
       "file": "quiz.json",
       "step": true,
-      "stage": 5,
+      "stage": 4,
       "time": "8 мин",
       "type": "quiz",
       "icon": "graduation-cap"
-    },
-    {
-      "id": "sdacha",
-      "title": "Как сдать первый ролик и что будет дальше?",
-      "file": "sdacha.md",
-      "step": true,
-      "stage": 6,
-      "time": "3 мин",
-      "icon": "send"
     },
     {
       "id": "katalog-belukha",
@@ -186,7 +157,10 @@
     "vizual": "obrazy",
     "raznica": "start",
     "biblioteka": "materialy",
-    "shablony": "materialy"
+    "shablony": "materialy",
+    "primery": "roliki",
+    "scenariy": "proizvodstvo",
+    "sdacha": "proizvodstvo"
   },
   "loginPosters": [
     "video/DddR1gxtb-1.jpg",

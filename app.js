@@ -945,7 +945,7 @@
         '<small>Шаг ' + stepNo(nxt) + ' из ' + steps.length + ': ' + esc(nxt.title) + (nxt.time ? ' · ' + esc(nxt.time) : '') + '</small></span>' +
         '<span class="hg-arrow" aria-hidden="true">' + icon('arrow-right') + '</span></a>' : '') +
       ((!nxt || n) ? '<div class="hero-cta">' + (nxt ? ''
-        : '<a class="btn big" href="#/sdacha">Как сдать первый ролик ' + icon('arrow-right') + '</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>') +
+        : '<a class="btn big" href="#/test">Материалы для работы ' + icon('arrow-right') + '</a><a class="btn ghost" href="#/proizvodstvo">Как мы работаем</a>') +
       (n ? '<button type="button" class="hero-reset">Сбросить прогресс</button>' : '') + '</div>' : '') + '</div>' + ring + '</section>';
 
     var nextCard = nxt ? '<a class="next-card" href="#/' + nxt.id + '">' +
