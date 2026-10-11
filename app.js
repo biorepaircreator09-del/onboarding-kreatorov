@@ -426,16 +426,18 @@
       var k = m[1].trim();
       var v = m[2].trim();
       var key = k.toLowerCase();
-      if (['бренд', 'имя', 'про', 'цитата', 'статус', 'фото'].indexOf(key) >= 0) meta[key] = v;
+      if (['бренд', 'имя', 'про', 'цитата', 'статус', 'фото', 'страна'].indexOf(key) >= 0) meta[key] = v;
       else rows.push([k, v]);
     });
     var box = document.createElement('article');
     box.className = 'persona';
     if (meta['бренд']) box.dataset.brand = meta['бренд'];
+    if (meta['страна']) box.dataset.country = meta['страна'];
     var initials = (meta['имя'] || '?').trim().charAt(0);
+    var flag = meta['страна'] === 'ru' ? '<span class="p-country">Россия</span>' : meta['страна'] === 'kz' ? '<span class="p-country">Казахстан</span>' : '';
     box.innerHTML =
       '<header class="p-head"><span class="p-ava" aria-hidden="true">' + esc(initials) + '</span>' +
-      '<div><h3 class="p-name">' + esc(meta['имя'] || '') + '</h3>' +
+      '<div><h3 class="p-name">' + esc(meta['имя'] || '') + flag + '</h3>' +
       (meta['про'] ? '<p class="p-about">' + esc(meta['про']) + '</p>' : '') + '</div></header>' +
       (meta['цитата'] ? '<blockquote class="p-quote">' + esc(meta['цитата']) + '</blockquote>' : '') +
       '<dl class="p-rows">' + rows.map(function (r) {
@@ -532,6 +534,33 @@
     code.parentElement.replaceWith(box);
   }
 
+  // ```выбор-страны: Россия / Казахстан / обе. Прячет карточки и блоки с data-country другой страны
+  var COUNTRIES = [['ru', 'Россия', 'русские имена и города'], ['kz', 'Казахстан', 'казахские имена и города'], ['all', 'Обе страны', 'показать всех героинь']];
+  function applyCountry(root, v) {
+    root.querySelectorAll('[data-country]').forEach(function (el) {
+      if (el.classList.contains('country-pick')) return;
+      el.hidden = v !== 'all' && el.dataset.country !== v;
+    });
+  }
+  function renderCountryPicker(code, root) {
+    var box = document.createElement('div');
+    box.className = 'brand-switch country-switch';
+    box.setAttribute('role', 'group');
+    box.setAttribute('aria-label', 'Моя страна');
+    box.innerHTML = '<span>Моя страна:</span>' + COUNTRIES.map(function (o) {
+      return '<button type="button" data-c="' + o[0] + '" title="' + esc(o[2]) + '">' + esc(o[1]) + '</button>';
+    }).join('');
+    var set = function (v) {
+      save('countryPref', v);
+      box.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.c === v)); });
+      applyCountry(root, v);
+    };
+    box.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) set(b.dataset.c); });
+    code.parentElement.replaceWith(box);
+    // карточки рисуются раньше переключателя, поэтому применяем выбор после всей разметки
+    setTimeout(function () { set(load('countryPref') || 'all'); }, 0);
+  }
+
   // Две врезки подряд «так / не так» (или «можно / нельзя») встают рядом
   function pairCallouts(root) {
     root.querySelectorAll('.callout').forEach(function (c) {
@@ -564,6 +593,7 @@
       });
     });
     root.querySelectorAll('pre > code.language-выбор-бренда').forEach(renderBrandPicker);
+    root.querySelectorAll('pre > code.language-выбор-страны').forEach(function (c) { renderCountryPicker(c, root); });
     root.querySelectorAll('pre > code.language-socials').forEach(function (code) {
       var holder = document.createElement('div');
       code.parentElement.replaceWith(holder);
