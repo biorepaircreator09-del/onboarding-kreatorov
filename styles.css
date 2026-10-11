@@ -135,6 +135,11 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .md li::marker { color: var(--accent); }
 .md hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
 .md img { max-width: 100%; height: auto; border-radius: var(--radius); }
+.md .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 16px 0 24px; }
+.md .reel { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.md .reel video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #111; border-radius: var(--radius); display: block; }
+.md .reel figcaption { font-size: 13.5px; line-height: 1.4; }
+.md .reel figcaption b { display: block; font-size: 14px; }
 .md blockquote { margin: 16px 0; padding: 4px 18px; border-left: 3px solid var(--accent); color: var(--muted); }
 .md strong { font-weight: 700; }
 .table-wrap { overflow-x: auto; margin: 16px 0 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
@@ -211,7 +216,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
 .home-hero .progress-bar i { background: #fff; }
 .home-sec { margin-top: 44px; }
 .home-sec > h2 { margin: 0 0 16px; font: 800 22px/1.25 var(--font-head); letter-spacing: -.01em; }
-.stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .stage { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
 .stage.complete { background: var(--yes-soft); border-color: transparent; }
 .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -254,6 +259,7 @@ code { font: 500 .9em/1.4 ui-monospace, Consolas, monospace; background: var(--a
   .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
+  .md .reels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   :root { --top-h: 56px; }
   .menu-btn { display: block; }
   .topbar { padding: 0 14px; gap: 10px; }

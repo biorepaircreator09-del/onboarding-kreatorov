@@ -2,34 +2,178 @@
   "title": "Smart Beauty Hub",
   "updated": "12.10.2026",
   "brands": [
-    { "id": "belukha", "name": "Белуха / Smart Bee" },
-    { "id": "biorepair", "name": "Biorepair®" }
+    {
+      "id": "belukha",
+      "name": "Белуха / Smart Bee"
+    },
+    {
+      "id": "biorepair",
+      "name": "Biorepair®"
+    }
   ],
-  "stages": ["Знакомство", "Люди и продукт", "Голос и картинка", "Практика", "Сдача и проверка"],
+  "stages": [
+    "Знакомство",
+    "Продукт и правила",
+    "Хорошие примеры",
+    "Производство",
+    "Практика и тест",
+    "Первый ролик"
+  ],
   "pages": [
-    { "id": "home", "title": "Главная", "type": "home" },
-
-    { "id": "start", "title": "Куда я попал и что будет в конце?", "file": "start.md", "step": true, "stage": 1, "time": "5 мин" },
-    { "id": "raznica", "title": "Чем эти два бренда отличаются?", "file": "raznica.md", "step": true, "stage": 1, "time": "10 мин" },
-    { "id": "auditoriya", "title": "Для кого я снимаю?", "file": "auditoriya.md", "step": true, "stage": 2, "time": "15 мин" },
-    { "id": "produkt", "title": "Что я рекламирую и что о нём можно говорить?", "file": "produkt.md", "step": true, "stage": 2, "time": "15 мин" },
-    { "id": "golos", "title": "Каким голосом говорить?", "file": "golos.md", "step": true, "stage": 3, "time": "12 мин" },
-    { "id": "obrazy", "title": "В каком мире живут наши ролики?", "file": "obrazy.md", "step": true, "stage": 3, "time": "10 мин" },
-    { "id": "vizual", "title": "Как это должно выглядеть в кадре?", "file": "vizual.md", "step": true, "stage": 3, "time": "15 мин" },
-    { "id": "primery", "title": "Какие ролики здесь работают?", "file": "primery.md", "step": true, "stage": 4, "time": "10 мин" },
-    { "id": "scenariy", "title": "Как собрать мой первый ролик?", "file": "scenariy.md", "step": true, "stage": 4, "time": "15 мин" },
-    { "id": "cheklist", "title": "Как снять, смонтировать и проверить?", "file": "cheklist.md", "step": true, "stage": 4, "time": "10 мин" },
-    { "id": "sdacha", "title": "Как сдать работу и что будет дальше?", "file": "sdacha.md", "step": true, "stage": 5, "time": "8 мин" },
-    { "id": "test", "title": "Я готов?", "file": "quiz.json", "step": true, "stage": 5, "time": "15 мин", "type": "quiz" },
-
-    { "id": "katalog-belukha", "icon": "leaf", "title": "Чай и мёд Белухи", "file": "catalog/belukha.json", "group": "Каталог", "type": "catalog", "brand": "belukha", "intro": "Все позиции бренда. Нажмите на карточку: вкус, состав, момент, идеи роликов. Листайте стрелками или свайпом." },
-    { "id": "katalog-biorepair", "icon": "dental", "title": "Продукты Biorepair®", "file": "catalog/biorepair.json", "group": "Каталог", "type": "catalog", "brand": "biorepair", "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом." },
-
-    { "id": "faq", "icon": "circle-help", "title": "Частые вопросы", "file": "faq.md", "group": "Инструменты" },
-    { "id": "pravila", "icon": "list-checks", "title": "Шпаргалка: можно и нельзя", "file": "pravila.md", "group": "Инструменты" },
-    { "id": "shablony", "icon": "file-pen-line", "title": "Шаблоны: сценарий, бриф, памятка", "file": "shablony.md", "group": "Инструменты" },
-    { "id": "biblioteka", "icon": "folder-open", "title": "Все материалы и соцсети", "file": "biblioteka.md", "group": "Инструменты" },
-
-    { "id": "obnovlenie", "title": "Как обновлять этот сайт", "file": "obnovlenie.md", "hidden": true }
-  ]
+    {
+      "id": "home",
+      "title": "Главная",
+      "type": "home"
+    },
+    {
+      "id": "roliki",
+      "title": "Какие ролики мы снимаем?",
+      "file": "roliki.md",
+      "step": true,
+      "stage": 1,
+      "time": "10 мин"
+    },
+    {
+      "id": "start",
+      "title": "Кто мы и чем отличаются бренды?",
+      "file": "start.md",
+      "step": true,
+      "stage": 1,
+      "time": "15 мин"
+    },
+    {
+      "id": "auditoriya",
+      "title": "Для кого я снимаю?",
+      "file": "auditoriya.md",
+      "step": true,
+      "stage": 2,
+      "time": "15 мин"
+    },
+    {
+      "id": "produkt",
+      "title": "Что я рекламирую и что о нём можно говорить?",
+      "file": "produkt.md",
+      "step": true,
+      "stage": 2,
+      "time": "15 мин"
+    },
+    {
+      "id": "golos",
+      "title": "Каким голосом говорить?",
+      "file": "golos.md",
+      "step": true,
+      "stage": 2,
+      "time": "12 мин"
+    },
+    {
+      "id": "obrazy",
+      "title": "Как должен выглядеть кадр?",
+      "file": "obrazy.md",
+      "step": true,
+      "stage": 2,
+      "time": "20 мин"
+    },
+    {
+      "id": "primery",
+      "title": "Почему эти ролики работают?",
+      "file": "primery.md",
+      "step": true,
+      "stage": 3,
+      "time": "10 мин"
+    },
+    {
+      "id": "proizvodstvo",
+      "title": "Как рождается ролик: от брифа до аналитики?",
+      "file": "proizvodstvo.md",
+      "step": true,
+      "stage": 4,
+      "time": "15 мин"
+    },
+    {
+      "id": "scenariy",
+      "title": "Как написать сценарий первого ролика?",
+      "file": "scenariy.md",
+      "step": true,
+      "stage": 5,
+      "time": "30 мин"
+    },
+    {
+      "id": "cheklist",
+      "title": "Как снять, смонтировать и проверить?",
+      "file": "cheklist.md",
+      "step": true,
+      "stage": 5,
+      "time": "10 мин"
+    },
+    {
+      "id": "test",
+      "title": "Я готов?",
+      "file": "quiz.json",
+      "step": true,
+      "stage": 5,
+      "time": "15 мин",
+      "type": "quiz"
+    },
+    {
+      "id": "sdacha",
+      "title": "Как сдать первый ролик и что будет дальше?",
+      "file": "sdacha.md",
+      "step": true,
+      "stage": 6,
+      "time": "8 мин"
+    },
+    {
+      "id": "katalog-belukha",
+      "icon": "leaf",
+      "title": "Чай и мёд Белухи",
+      "file": "catalog/belukha.json",
+      "group": "Каталог",
+      "type": "catalog",
+      "brand": "belukha",
+      "intro": "Все позиции бренда. Нажмите на карточку: вкус, состав, момент, идеи роликов. Листайте стрелками или свайпом."
+    },
+    {
+      "id": "katalog-biorepair",
+      "icon": "dental",
+      "title": "Продукты Biorepair®",
+      "file": "catalog/biorepair.json",
+      "group": "Каталог",
+      "type": "catalog",
+      "brand": "biorepair",
+      "intro": "Пасты, ополаскиватели, щётки и нити. В карточке: чем отличается, для кого, как говорить и как нельзя. Листайте стрелками или свайпом."
+    },
+    {
+      "id": "pravila",
+      "icon": "list-checks",
+      "title": "Можно и нельзя: шпаргалка",
+      "file": "pravila.md",
+      "group": "Инструменты"
+    },
+    {
+      "id": "materialy",
+      "icon": "folder-open",
+      "title": "Рабочие материалы и ссылки",
+      "file": "materialy.md",
+      "group": "Инструменты"
+    },
+    {
+      "id": "faq",
+      "icon": "circle-help",
+      "title": "Вопросы и контакты",
+      "file": "faq.md",
+      "group": "Инструменты"
+    },
+    {
+      "id": "obnovlenie",
+      "title": "Как обновлять этот сайт",
+      "file": "obnovlenie.md",
+      "hidden": true
+    }
+  ],
+  "aliases": {
+    "vizual": "obrazy",
+    "raznica": "start",
+    "biblioteka": "materialy",
+    "shablony": "materialy"
+  }
 }

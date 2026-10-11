@@ -548,7 +548,7 @@
     var cta = !nxt
       ? '<a class="btn big" href="#/test">Открыть итоговое задание</a><a class="btn ghost" href="#/scenariy">Шаблон сценария</a>'
       : '<a class="btn big" href="#/' + nxt.id + '">' + (n ? 'Продолжить' : 'Начать онбординг') + ' →</a>' +
-        '<span class="cta-note">' + (n ? 'Шаг ' + stepNo(nxt) + ': ' + esc(nxt.title) : 'Первый шаг займёт 5 минут') + '</span>';
+        '<span class="cta-note">' + (n ? 'Шаг ' + stepNo(nxt) + ': ' + esc(nxt.title) : 'Первый шаг займёт ' + esc(steps[0].time || '5 мин').replace('мин', 'минут')) + '</span>';
 
     var hero = '<section class="home-hero">' +
       '<p class="eyebrow">Smart Beauty Hub · онбординг креаторов Предгорий Белухи и Biorepair®</p>' +
@@ -589,9 +589,9 @@
     var tools = '<section class="home-sec"><h2>Под рукой в работе</h2><div class="tool-cards">' +
       tool('katalog-belukha', 'leaf', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
       tool('katalog-biorepair', 'dental', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
-      tool('faq', 'circle-help', 'Частые вопросы', 'Процесс, сдача, правки, маркировка') +
-      tool('shablony', 'file-pen-line', 'Шаблоны', 'Сценарий, бриф и памятка блогеру') +
-      tool('biblioteka', 'folder-open', 'Все материалы и соцсети', 'Брендбуки, логотипы, аккаунты брендов') +
+      tool('pravila', 'list-checks', 'Можно и нельзя', 'Все правила обоих брендов на одной странице') +
+      tool('materialy', 'folder-open', 'Рабочие материалы', 'Таблицы, шаблоны, брендбуки, соцсети') +
+      tool('faq', 'circle-help', 'Вопросы и контакты', 'Процесс, сдача, правки и к кому обращаться') +
       '</div></section>';
 
     root.innerHTML = hero +
@@ -947,6 +947,8 @@
   function show() {
     var parts = decodeURIComponent(location.hash.replace(/^#\/?/, '')).split('/');
     var id = parts[0] || 'home';
+    // Старые адреса страниц, слитых в v3 (12.10.2026), ведут на новые.
+    if (site.aliases && site.aliases[id]) { location.replace('#/' + site.aliases[id]); return; }
     var sub = parts[1] || '';
     var page = site.pages.find(function (p) { return p.id === id; }) || site.pages[0];
     var root = document.getElementById('main');
