@@ -109,6 +109,16 @@
   // Тестовый вход без пароля: имя становится ключом личного раздела в хранилище браузера.
   // Пароли и общий сервер появятся позже; формат users/current менять тогда же.
 
+  var COUNTRY_OPTS = [['ru', 'Россия'], ['kz', 'Казахстан'], ['all', 'Обе страны']];
+  function countryLabel(c) {
+    var o = COUNTRY_OPTS.find(function (x) { return x[0] === c; });
+    return o ? o[1] : 'Обе страны';
+  }
+  function plural(n, one, few, many) {
+    var m10 = n % 10, m100 = n % 100;
+    return m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many;
+  }
+
   var BRAND_OPTS = [
     ['belukha', 'Предгорья Белухи', 'чай, иван-чай, мёд'],
     ['biorepair', 'Biorepair®', 'зубные пасты и уход'],
@@ -148,22 +158,24 @@
     });
   }
 
-  function login(name, brand) {
+  function login(name, brand, country) {
     var list = userList();
     var id = userId(name);
     var u = list.find(function (x) { return x.id === id; });
     if (!u) {
       if (!list.length) adoptLegacy(id);
-      u = { id: id, name: name, brand: brand || 'all', created: Date.now() };
+      u = { id: id, name: name, brand: brand || 'all', country: country || 'all', created: Date.now() };
       list.push(u);
-    } else if (brand) {
-      u.brand = brand;
+    } else {
+      if (brand) u.brand = brand;
+      if (country) u.country = country;
     }
     u.last = Date.now();
     gsave('users', list);
     gsave('current', u.id);
     setUser(u);
     if (brand) save('brandPref', brand);
+    if (country) save('countryPref', country);
   }
 
   function logout() {
@@ -190,6 +202,9 @@
       '<div class="um-brand"><span>Мой бренд</span><div>' + BRAND_OPTS.map(function (o) {
         return '<button type="button" data-b="' + o[0] + '" aria-pressed="' + ((load('brandPref') || user.brand || 'all') === o[0]) + '">' + esc(o[0] === 'all' ? 'Оба' : o[1]) + '</button>';
       }).join('') + '</div></div>' +
+      '<div class="um-brand um-country"><span>Моя страна</span><div>' + COUNTRY_OPTS.map(function (o) {
+        return '<button type="button" data-c="' + o[0] + '" aria-pressed="' + ((load('countryPref') || user.country || 'all') === o[0]) + '">' + esc(o[0] === 'all' ? 'Обе' : o[1]) + '</button>';
+      }).join('') + '</div></div>' +
       '<a class="um-item" href="#/home">' + icon('house') + 'Личный кабинет</a>' +
       '<button type="button" class="um-item um-out">' + icon('log-out') + 'Сменить пользователя</button>' +
       '<p class="um-note">' + icon('lock') + '<span>Тестовый вход без пароля. Прогресс хранится в этом браузере.</span></p></div>';
@@ -207,8 +222,10 @@
       b.addEventListener('click', function () {
         var list = userList();
         var u = list.find(function (x) { return x.id === user.id; });
-        if (u) { u.brand = b.dataset.b; gsave('users', list); user = u; }
-        save('brandPref', b.dataset.b);
+        var key = b.dataset.c ? 'country' : 'brand';
+        var val = b.dataset.c || b.dataset.b;
+        if (u) { u[key] = val; gsave('users', list); user = u; }
+        save(key + 'Pref', val);
         close();
         renderUserMenu();
         show();
@@ -230,7 +247,7 @@
       '<div class="login-card">' +
       '<div class="login-brand-row"><span class="logo-mark big"></span><span>Smart Beauty Hub</span></div>' +
       '<h1>Добро пожаловать в команду креаторов</h1>' +
-      '<p class="lead">12 коротких шагов: от знакомства с брендами до первого ролика, который примут с первого раза.</p>' +
+      '<p class="lead">' + site.pages.filter(function (p) { return p.step; }).length + ' коротких шагов: бренды, их правила и то, как мы работаем.</p>' +
       '<form class="login-form" novalidate>' +
       '<label class="lf-label" for="lg-name">Как к вам обращаться</label>' +
       '<input id="lg-name" class="lf-input" name="name" autocomplete="name" placeholder="Например, Анна Смирнова" maxlength="40" required>' +
@@ -239,6 +256,11 @@
       BRAND_OPTS.map(function (o, i) {
         return '<label class="lf-brand" data-b="' + o[0] + '"><input type="radio" name="brand" value="' + o[0] + '"' + (i === 2 ? ' checked' : '') + '>' +
           '<span class="lfb-name">' + esc(o[1]) + '</span><span class="lfb-sub">' + esc(o[2]) + '</span></label>';
+      }).join('') + '</fieldset>' +
+      '<fieldset class="lf-brands lf-countries"><legend class="lf-label">Для какой страны снимаете</legend>' +
+      COUNTRY_OPTS.map(function (o, i) {
+        return '<label class="lf-brand" data-c="' + o[0] + '"><input type="radio" name="country" value="' + o[0] + '"' + (i === 0 ? ' checked' : '') + '>' +
+          '<span class="lfb-name">' + esc(o[1]) + '</span></label>';
       }).join('') + '</fieldset>' +
       '<button class="btn big login-go" type="submit">Начать ' + icon('arrow-right') + '</button>' +
       '</form>' +
@@ -262,14 +284,15 @@
         return;
       }
       var b = form.querySelector('input[name=brand]:checked');
-      login(name, b ? b.value : 'all');
+      var c = form.querySelector('input[name=country]:checked');
+      login(name, b ? b.value : 'all', c ? c.value : 'all');
       show();
     });
     input.addEventListener('input', function () { err.hidden = true; });
     root.querySelectorAll('.lk').forEach(function (b) {
       b.addEventListener('click', function () {
         var u = userList().find(function (x) { return x.id === b.dataset.id; });
-        if (u) { login(u.name, null); show(); }
+        if (u) { login(u.name, null, null); show(); }
       });
     });
     setTimeout(function () { input.focus({ preventScroll: true }); }, 50);
@@ -607,7 +630,8 @@
       });
     });
     root.querySelectorAll('pre > code.language-выбор-бренда').forEach(renderBrandPicker);
-    root.querySelectorAll('pre > code.language-выбор-страны').forEach(function (c) { renderCountryPicker(c, root); });
+    root.querySelectorAll('pre > code.language-выбор-страны').forEach(function (c) { c.parentElement.remove(); });
+    setTimeout(function () { applyCountry(root, load('countryPref') || (user && user.country) || 'all'); }, 0);
     root.querySelectorAll('pre > code.language-socials').forEach(function (code) {
       var holder = document.createElement('div');
       code.parentElement.replaceWith(holder);
@@ -995,7 +1019,7 @@
       '</div></section>';
 
     root.innerHTML = hero + stats +
-      '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' этапов</h2><ol class="stages">' + stages + '</ol></section>' +
+      '<section class="home-sec"><h2>Маршрут: ' + (site.stages || []).length + ' ' + plural((site.stages || []).length, 'этап', 'этапа', 'этапов') + '</h2><ol class="stages">' + stages + '</ol></section>' +
       brands + tools;
     var hr = root.querySelector('.hero-reset');
     if (hr) hr.addEventListener('click', function () { resetProgress(hr); });
@@ -1094,7 +1118,7 @@
     });
     html += '<div class="quiz-foot"><button class="btn" type="submit">Проверить</button><button class="btn ghost" type="reset">Начать заново</button></div>';
     html += '<p class="quiz-result" role="status"></p></form>';
-    if (data.task) html += '<div class="md">' + marked.parse(data.task) + '</div>';
+    if (data.task) html += '<div class="md quiz-after"' + (load('quiz') ? '' : ' hidden') + '>' + marked.parse(data.task) + '</div>';
     root.innerHTML = html + stepFooter(page);
     enhance(root, page);
     bindStep(root, page);
@@ -1124,6 +1148,8 @@
         ? 'Тест пройден. Осталось практическое задание ниже.'
         : 'Нужно не меньше ' + pass + '. Перечитайте разделы, где ошиблись, и пройдите ещё раз.');
       save('quiz', { right: right, total: total, at: Date.now() });
+      var after = root.querySelector('.quiz-after');
+      if (after) after.hidden = false;
       if (right >= pass) { markDone(page.id); renderNav(page.id); }
       res.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });

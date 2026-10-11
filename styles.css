@@ -793,3 +793,9 @@ body[data-page="home"] .continue { display: none; }
 .um-brand > div { display: flex; flex-wrap: wrap; gap: 6px; }
 .um-brand button { padding: 5px 10px; border: 1px solid var(--line); border-radius: 99px; background: #fff; font: 600 12.5px/1.2 var(--font-body); color: var(--ink-2); cursor: pointer; }
 .um-brand button[aria-pressed="true"] { border-color: var(--belukha); background: var(--belukha); color: #fff; }
+
+/* v4.9: страна на входе */
+.lf-countries { margin-top: -10px; }
+.lf-countries .lf-brand { flex-direction: row; justify-content: center; padding: 10px 12px; }
+.lf-brand[data-c]:has(input:checked) { border-color: var(--bio); background: var(--bio-soft); box-shadow: inset 0 0 0 1px var(--bio); }
+@media (max-width: 900px) { .lf-countries { grid-template-columns: repeat(3, minmax(0, 1fr)); } .lf-countries .lf-brand { justify-content: center; } }
