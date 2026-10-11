@@ -4,7 +4,7 @@
   "brands": [
     {
       "id": "belukha",
-      "name": "Белуха / Smart Bee"
+      "name": "Предгорья Белухи / Smart Bee"
     },
     {
       "id": "biorepair",
@@ -125,7 +125,7 @@
     {
       "id": "katalog-belukha",
       "icon": "leaf",
-      "title": "Чай и мёд Белухи",
+      "title": "Чай и мёд «Предгорий Белухи»",
       "file": "catalog/belukha.json",
       "group": "Каталог",
       "type": "catalog",

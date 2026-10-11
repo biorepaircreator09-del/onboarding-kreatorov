@@ -553,7 +553,7 @@
     var hero = '<section class="home-hero">' +
       '<p class="eyebrow">Smart Beauty Hub · онбординг креаторов Предгорий Белухи и Biorepair®</p>' +
       '<h1>' + esc(title) + '</h1>' +
-      '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
+      '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом — немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
       '<div class="hero-cta">' + cta + '</div>' +
       '<div class="hero-progress"><div class="progress-bar big" role="progressbar" aria-label="Прогресс онбординга" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
       '<span>' + n + ' из ' + steps.length + ' шагов</span>' +
@@ -575,19 +575,19 @@
         }).join('') + '</ol></li>';
     }).join('');
 
-    var brands = '<section class="home-sec"><h2>Два бренда, два голоса</h2><div class="brand-cards">' +
+    var brands = '<section class="home-sec"><h2>Два бренда — два голоса</h2><div class="brand-cards">' +
       '<a class="brand-card" data-brand="belukha" href="#/katalog-belukha"><span class="bc-ico">' + icon('leaf') + '</span><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
       '<span class="bc-name">Предгорья Белухи / Smart Bee</span>' +
-      '<span class="bc-text">Уют, семья и красивое чаепитие. От креатора ждут охваты. Главное табу: «чай лечит».</span>' +
+      '<span class="bc-text">Уют, семья и красивое чаепитие. От креатора ждут охваты. Главное табу — «чай лечит».</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
       '<a class="brand-card" data-brand="biorepair" href="#/katalog-biorepair"><span class="bc-ico">' + icon('dental') + '</span><span class="bc-kicker">Зубные пасты · Италия</span>' +
       '<span class="bc-name">Biorepair®</span>' +
-      '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре, и материал на пересборку.</span>' +
+      '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре — и материал на пересборку.</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
       '</div></section>';
 
     var tools = '<section class="home-sec"><h2>Под рукой в работе</h2><div class="tool-cards">' +
-      tool('katalog-belukha', 'leaf', 'Каталог Белухи', '91 позиция: вкус, состав, заварка, идеи роликов') +
+      tool('katalog-belukha', 'leaf', 'Каталог «Предгорий Белухи»', '91 позиция: вкус, состав, заварка, идеи роликов') +
       tool('katalog-biorepair', 'dental', 'Каталог Biorepair®', '33 позиции: чем отличается и как говорить') +
       tool('pravila', 'list-checks', 'Можно и нельзя', 'Все правила обоих брендов на одной странице') +
       tool('materialy', 'folder-open', 'Рабочие материалы', 'Таблицы, шаблоны, брендбуки, соцсети') +
@@ -662,7 +662,7 @@
     bar.setAttribute('role', 'group');
     bar.setAttribute('aria-label', 'Мой бренд');
     bar.innerHTML = '<span>Мой бренд:</span>' +
-      [['all', 'Оба'], ['belukha', 'Белуха'], ['biorepair', 'Biorepair®']].map(function (o) {
+      [['all', 'Оба'], ['belukha', 'Предгорья Белухи'], ['biorepair', 'Biorepair®']].map(function (o) {
         return '<button type="button" data-b="' + o[0] + '">' + o[1] + '</button>';
       }).join('');
     branded[0].before(bar);
