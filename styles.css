@@ -786,3 +786,10 @@ body[data-page="home"] .continue { display: none; }
 @media (max-width: 900px) { .md .kit { grid-template-columns: minmax(0, 1fr); } }
 .md .kit { grid-template-rows: auto 1fr; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; column-gap: 16px; row-gap: 0; padding: 18px; border-radius: 20px; background: linear-gradient(135deg, var(--belukha-soft), var(--bio-soft)); }
 @media (max-width: 900px) { .md .kit { grid-template-rows: none; grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); } .md .kit h3 { margin-top: 12px; } }
+
+/* v4.8: смена бренда в меню пользователя */
+.um-brand { margin: 0 8px 8px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.um-brand > span { display: block; margin-bottom: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.um-brand > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.um-brand button { padding: 5px 10px; border: 1px solid var(--line); border-radius: 99px; background: #fff; font: 600 12.5px/1.2 var(--font-body); color: var(--ink-2); cursor: pointer; }
+.um-brand button[aria-pressed="true"] { border-color: var(--belukha); background: var(--belukha); color: #fff; }

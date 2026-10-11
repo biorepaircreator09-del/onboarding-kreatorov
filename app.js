@@ -187,6 +187,9 @@
       '<span class="avatar" aria-hidden="true">' + esc(initials(user.name)) + '</span>' +
       '<span class="um-name">' + esc(firstName(user)) + '</span></button>' +
       '<div class="um-pop" hidden><p class="um-who"><b>' + esc(user.name) + '</b><span>' + esc(brandLabel(user.brand)) + '</span></p>' +
+      '<div class="um-brand"><span>Мой бренд</span><div>' + BRAND_OPTS.map(function (o) {
+        return '<button type="button" data-b="' + o[0] + '" aria-pressed="' + ((load('brandPref') || user.brand || 'all') === o[0]) + '">' + esc(o[0] === 'all' ? 'Оба' : o[1]) + '</button>';
+      }).join('') + '</div></div>' +
       '<a class="um-item" href="#/home">' + icon('house') + 'Личный кабинет</a>' +
       '<button type="button" class="um-item um-out">' + icon('log-out') + 'Сменить пользователя</button>' +
       '<p class="um-note">' + icon('lock') + '<span>Тестовый вход без пароля. Прогресс хранится в этом браузере.</span></p></div>';
@@ -200,6 +203,17 @@
     });
     pop.addEventListener('click', function (e) { e.stopPropagation(); if (e.target.closest('a')) close(); });
     box.querySelector('.um-out').addEventListener('click', function () { close(); logout(); });
+    box.querySelectorAll('.um-brand button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var list = userList();
+        var u = list.find(function (x) { return x.id === user.id; });
+        if (u) { u.brand = b.dataset.b; gsave('users', list); user = u; }
+        save('brandPref', b.dataset.b);
+        close();
+        renderUserMenu();
+        show();
+      });
+    });
     if (menuCloser) document.removeEventListener('click', menuCloser);
     menuCloser = close;
     document.addEventListener('click', menuCloser);
@@ -1043,15 +1057,6 @@
     });
     var branded = sections.filter(function (x) { return x.dataset.brand !== 'all'; });
     if (!branded.length) return;
-    var bar = document.createElement('div');
-    bar.className = 'brand-switch';
-    bar.setAttribute('role', 'group');
-    bar.setAttribute('aria-label', 'Мой бренд');
-    bar.innerHTML = '<span>Мой бренд:</span>' +
-      [['all', 'Оба'], ['belukha', 'Предгорья Белухи'], ['biorepair', 'Biorepair®']].map(function (o) {
-        return '<button type="button" data-b="' + o[0] + '">' + o[1] + '</button>';
-      }).join('');
-    branded[0].before(bar);
     branded.forEach(function (sec) {
       var h = sec.querySelector('h2');
       var t = document.createElement('button');
@@ -1061,8 +1066,6 @@
       t.addEventListener('click', function () { sec.classList.toggle('open'); });
     });
     function apply(v) {
-      save('brandPref', v);
-      bar.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.b === v ? 'true' : 'false'); });
       branded.forEach(function (sec) {
         var other = v !== 'all' && sec.dataset.brand !== v;
         sec.classList.toggle('other', other);
@@ -1071,8 +1074,7 @@
       });
       countChecks(root);
     }
-    bar.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) apply(b.dataset.b); });
-    apply(load('brandPref') || 'all');
+    apply(load('brandPref') || (user && user.brand) || 'all');
   }
 
   /* ---------- тест ---------- */
