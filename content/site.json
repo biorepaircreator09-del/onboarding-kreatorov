@@ -1,6 +1,6 @@
 {
   "title": "Smart Beauty Hub",
-  "updated": "30.09.2026",
+  "updated": "12.10.2026",
   "brands": [
     { "id": "belukha", "name": "Белуха / Smart Bee" },
     { "id": "biorepair", "name": "Biorepair®" }
@@ -14,6 +14,7 @@
     { "id": "auditoriya", "title": "Для кого я снимаю?", "file": "auditoriya.md", "step": true, "stage": 2, "time": "15 мин" },
     { "id": "produkt", "title": "Что я рекламирую и что о нём можно говорить?", "file": "produkt.md", "step": true, "stage": 2, "time": "15 мин" },
     { "id": "golos", "title": "Каким голосом говорить?", "file": "golos.md", "step": true, "stage": 3, "time": "12 мин" },
+    { "id": "obrazy", "title": "В каком мире живут наши ролики?", "file": "obrazy.md", "step": true, "stage": 3, "time": "10 мин" },
     { "id": "vizual", "title": "Как это должно выглядеть в кадре?", "file": "vizual.md", "step": true, "stage": 3, "time": "15 мин" },
     { "id": "primery", "title": "Какие ролики здесь работают?", "file": "primery.md", "step": true, "stage": 4, "time": "10 мин" },
     { "id": "scenariy", "title": "Как собрать мой первый ролик?", "file": "scenariy.md", "step": true, "stage": 4, "time": "15 мин" },
