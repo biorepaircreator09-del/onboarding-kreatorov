@@ -1,5 +1,5 @@
 /* Smart Beauty Hub: всё содержание приходит из content/, здесь только движок.
-   Страницы описаны в content/site.json, тексты — Markdown, тест — content/quiz.json. */
+   Страницы описаны в content/site.json, тексты в Markdown, тест в content/quiz.json. */
 (function () {
   'use strict';
 
@@ -90,7 +90,7 @@
     return routePages().filter(function (p) { return d[p.id]; }).length;
   }
 
-  // Следующий непройденный шаг; если всё пройдено – null
+  // Следующий непройденный шаг; если всё пройдено, null
   function nextStep() {
     var d = doneSet();
     return routePages().find(function (p) { return !d[p.id]; }) || null;
@@ -234,7 +234,7 @@
 
   /* ---------- учебные блоки внутри Markdown ---------- */
 
-  // ```persona — карточка героини: строки «ключ: значение», списки через « ; »
+  // ```persona: карточка героини: строки «ключ: значение», списки через « ; »
   function renderPersona(code) {
     var rows = [];
     var meta = {};
@@ -272,8 +272,8 @@
     return marked.parseInline ? marked.parseInline(s) : esc(s);
   }
 
-  // ```вопрос — упражнение с мгновенной проверкой.
-  // Первые строки — вопрос, «- вариант» (звёздочка * в конце — верный), «= объяснение».
+  // ```вопрос: упражнение с мгновенной проверкой.
+  // Первые строки: вопрос, «- вариант» (звёздочка * в конце у верного), «= объяснение».
   var qCounter = 0;
   function renderQuestion(code) {
     var q = [], opts = [], explain = '';
@@ -314,7 +314,7 @@
     code.parentElement.replaceWith(box);
   }
 
-  // ```выбор-бренда — большие карточки выбора, сохраняются для всего курса
+  // ```выбор-бренда: большие карточки выбора, сохраняются для всего курса
   function renderBrandPicker(code) {
     var box = document.createElement('div');
     box.className = 'picker';
@@ -330,7 +330,7 @@
           return '<button type="button" class="pick" data-b="' + o[0] + '" aria-pressed="' + (cur === o[0]) + '">' +
             '<span class="pick-name">' + esc(o[1]) + '</span><span class="pick-sub">' + esc(o[2]) + '</span></button>';
         }).join('') + '</div>' +
-        '<p class="picker-note">' + (cur ? 'Готово. Дальше в каждом модуле первым будет ваш бренд, второй – свёрнут, его можно открыть. Сменить выбор можно здесь в любой момент.' : 'Выбор можно поменять в любой момент.') + '</p>';
+        '<p class="picker-note">' + (cur ? 'Готово. Дальше в каждом модуле первым будет ваш бренд, второй свёрнут, его можно открыть. Сменить выбор можно здесь в любой момент.' : 'Выбор можно поменять в любой момент.') + '</p>';
     }
     box.addEventListener('click', function (e) {
       var b = e.target.closest('.pick');
@@ -427,7 +427,7 @@
       w.appendChild(t);
     });
 
-    // Блоки кода — шаблоны с кнопкой «Скопировать»
+    // Блоки кода: шаблоны с кнопкой «Скопировать»
     root.querySelectorAll('pre').forEach(function (pre) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -447,7 +447,7 @@
       wrap.appendChild(pre);
     });
 
-    // Внешние ссылки — в новой вкладке
+    // Внешние ссылки открываются в новой вкладке
     root.querySelectorAll('a[href^="http"]').forEach(function (a) {
       a.target = '_blank';
       a.rel = 'noopener';
@@ -553,7 +553,7 @@
     var hero = '<section class="home-hero">' +
       '<p class="eyebrow">Smart Beauty Hub · онбординг креаторов Предгорий Белухи и Biorepair®</p>' +
       '<h1>' + esc(title) + '</h1>' +
-      '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом – немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
+      '<p class="lead">' + steps.length + ' коротких шагов, около ' + (Math.round(total / 10) * 10) + ' минут. В каждом немного теории, пример и маленькое задание. Прогресс сохраняется в этом браузере.</p>' +
       '<div class="hero-cta">' + cta + '</div>' +
       '<div class="hero-progress"><div class="progress-bar big" role="progressbar" aria-label="Прогресс онбординга" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
       '<span>' + n + ' из ' + steps.length + ' шагов</span>' +
@@ -575,14 +575,14 @@
         }).join('') + '</ol></li>';
     }).join('');
 
-    var brands = '<section class="home-sec"><h2>Два бренда – два голоса</h2><div class="brand-cards">' +
+    var brands = '<section class="home-sec"><h2>Два бренда, два голоса</h2><div class="brand-cards">' +
       '<a class="brand-card" data-brand="belukha" href="#/katalog-belukha"><span class="bc-ico">' + icon('leaf') + '</span><span class="bc-kicker">Чай, иван-чай, мёд · Алтай</span>' +
       '<span class="bc-name">Предгорья Белухи / Smart Bee</span>' +
       '<span class="bc-text">Уют, семья и красивое чаепитие. От креатора ждут охваты. Главное табу: «чай лечит».</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
       '<a class="brand-card" data-brand="biorepair" href="#/katalog-biorepair"><span class="bc-ico">' + icon('dental') + '</span><span class="bc-kicker">Зубные пасты · Италия</span>' +
       '<span class="bc-name">Biorepair®</span>' +
-      '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре – и материал на пересборку.</span>' +
+      '<span class="bc-text">Наука простыми словами и спокойный тон. Самые строгие правила: одна ошибка в кадре, и материал на пересборку.</span>' +
       '<span class="bc-more">Смотреть продукты →</span></a>' +
       '</div></section>';
 
@@ -640,7 +640,7 @@
   }
 
   // Переключатель «Мой бренд»: разделы с названием бренда в заголовке h2.
-  // Свой бренд открыт, чужой свёрнут до заголовка – его можно раскрыть.
+  // Свой бренд открыт, чужой свёрнут до заголовка, его можно раскрыть.
   function brandTabs(root) {
     var sections = [];
     var cur = null;
@@ -839,7 +839,7 @@
       var body;
       if (f[2] === 'components') {
         body = '<ul class="comp">' + asList(v).map(function (c) {
-          return '<li><b>' + esc(c.name) + '</b>' + (c.role ? ' – ' + esc(c.role) : '') + '</li>';
+          return '<li><b>' + esc(c.name) + '</b>' + (c.role ? ': ' + esc(c.role) : '') + '</li>';
         }).join('') + '</ul>';
       } else if (f[2] === 'list') {
         body = '<ul>' + asList(v).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
